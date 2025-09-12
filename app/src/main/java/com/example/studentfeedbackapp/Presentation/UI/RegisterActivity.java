@@ -1,7 +1,9 @@
 package com.example.studentfeedbackapp.Presentation.UI;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,9 +15,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.studentfeedbackapp.Models.ApiInterface.RegisterApiService;
-import com.example.studentfeedbackapp.Models.Entities.Batch;
-import com.example.studentfeedbackapp.Models.Entities.Course;
+import com.example.studentfeedbackapp.Models.Request.Batch;
+import com.example.studentfeedbackapp.Models.Request.Course;
 import com.example.studentfeedbackapp.Models.Request.RegisterRequest;
+import com.example.studentfeedbackapp.Models.Request.RegisterRequest;
+import com.example.studentfeedbackapp.Models.Response.BatchResponse;
+import com.example.studentfeedbackapp.Models.Response.CourseResponse;
 import com.example.studentfeedbackapp.Models.Response.RegisterResponse;
 import com.example.studentfeedbackapp.Models.RetrofitClient.RetrofitClient;
 import com.example.studentfeedbackapp.R;
@@ -29,73 +34,31 @@ import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText etName, etEmail, etPassword, etConfirmPassword;
+    EditText etName, etEmail, etPassword;
     Spinner spinnerCourse, spinnerBatch;
     Button btnSubmit;
     TextView tvLogin;
 
     RegisterApiService registerApiService;
-    List<Course> courseList;
-    List<Batch> batchList;
+    List<Course> courseList = new ArrayList<>();
+    List<Batch> batchList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // UI Components
         etName = findViewById(R.id.etName);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
-        etConfirmPassword = findViewById(R.id.etConfirmPassword);
         spinnerCourse = findViewById(R.id.spinnerCourse);
         spinnerBatch = findViewById(R.id.spinnerBatch);
         btnSubmit = findViewById(R.id.btnSubmit);
         tvLogin = findViewById(R.id.tvLogin);
 
-        // Set all EditText text and hint color to black
-        etName.setTextColor(getResources().getColor(android.R.color.black));
-        etName.setHintTextColor(getResources().getColor(android.R.color.black));
-
-        etEmail.setTextColor(getResources().getColor(android.R.color.black));
-        etEmail.setHintTextColor(getResources().getColor(android.R.color.black));
-
-        etPassword.setTextColor(getResources().getColor(android.R.color.black));
-        etPassword.setHintTextColor(getResources().getColor(android.R.color.black));
-
-        etConfirmPassword.setTextColor(getResources().getColor(android.R.color.black));
-        etConfirmPassword.setHintTextColor(getResources().getColor(android.R.color.black));
-
-        // Retrofit API
         registerApiService = RetrofitClient.getClient().create(RegisterApiService.class);
 
-        // Dummy courses
-        courseList = new ArrayList<>();
-        courseList.add(new Course(1, "DMC"));
-        courseList.add(new Course(2, "DAC"));
-        courseList.add(new Course(3, "DBDA"));
-        courseList.add(new Course(4, "DESD"));
-        courseList.add(new Course(5, "DITISS"));
-
-        // Dummy batches
-        batchList = new ArrayList<>();
-        batchList.add(new Batch(1, "W1", 1));
-        batchList.add(new Batch(2, "W2", 1));
-        batchList.add(new Batch(3, "W3", 1));
-        batchList.add(new Batch(14, "D1", 2));
-        batchList.add(new Batch(15, "D2", 2));
-        batchList.add(new Batch(16, "D3", 2));
-        batchList.add(new Batch(17, "E1", 3));
-        batchList.add(new Batch(18, "E2", 3));
-        batchList.add(new Batch(19, "E3", 3));
-        batchList.add(new Batch(20, "B1", 4));
-        batchList.add(new Batch(21, "B2", 4));
-        batchList.add(new Batch(22, "B3", 4));
-        batchList.add(new Batch(8, "T1", 5));
-        batchList.add(new Batch(9, "T2", 5));
-        batchList.add(new Batch(10, "T3", 5));
-
-        setupCourseSpinner();
+        fetchCourses();
 
         btnSubmit.setOnClickListener(v -> registerUser());
 
@@ -105,42 +68,107 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    private void fetchCourses() {
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        String token = prefs.getString("token", null);
+        if (token == null) {
+            Toast.makeText(this, "Token missing. Please login again.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String authHeader = "Bearer " + token;
+
+        registerApiService.getCourses(authHeader).enqueue(new Callback<CourseResponse>() {
+            @Override
+            public void onResponse(Call<CourseResponse> call, Response<CourseResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    courseList = response.body().getData();
+                    setupCourseSpinner();
+                } else {
+                    String errorMsg = "Failed to load courses!";
+                    try {
+                        if (response.errorBody() != null) {
+                            errorMsg = response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CourseResponse> call, Throwable t) {
+                Toast.makeText(RegisterActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void fetchBatches(int courseId) {
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        String token = prefs.getString("token", null);
+        if (token == null) {
+            Toast.makeText(this, "Token missing. Please login again.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String authHeader = "Bearer " + token;
+
+        registerApiService.getBatches(String.valueOf(courseId), authHeader)
+                .enqueue(new Callback<BatchResponse>() {
+                    @Override
+                    public void onResponse(Call<BatchResponse> call, Response<BatchResponse> response) {
+                        batchList = new ArrayList<>(); // ✅ Always initialize
+
+                        if (response.isSuccessful() && response.body() != null) {
+                            batchList = response.body().getData();
+
+                            if (batchList == null) batchList = new ArrayList<>();
+
+                            if (batchList.isEmpty()) {
+                                Toast.makeText(RegisterActivity.this,
+                                        "No batches found for selected course", Toast.LENGTH_SHORT).show();
+                            }
+
+                            setupBatchSpinner();
+                        } else {
+                            Toast.makeText(RegisterActivity.this,
+                                    "Failed to load batches", Toast.LENGTH_SHORT).show();
+                            setupBatchSpinner();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<BatchResponse> call, Throwable t) {
+                        batchList = new ArrayList<>();
+                        setupBatchSpinner();
+                        Toast.makeText(RegisterActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
+
     private void setupCourseSpinner() {
         List<String> courseNames = new ArrayList<>();
-        courseNames.add("Select Course"); // Default prompt
+        courseNames.add("Select Course");
         for (Course c : courseList) courseNames.add(c.getCoursename());
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, courseNames) {
-            @Override
-            public boolean isEnabled(int position) {
-                return true;
-            }
-
-            @Override
-            public View getDropDownView(int position, View convertView, android.view.ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view;
-                if (position == 0) {
-                    tv.setTextColor(getResources().getColor(android.R.color.darker_gray)); // default prompt grey
-                } else {
-                    tv.setTextColor(getResources().getColor(android.R.color.black)); // all other black
-                }
-                return tv;
-            }
-        };
-
+                android.R.layout.simple_spinner_item, courseNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCourse.setAdapter(adapter);
 
         spinnerCourse.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    setupBatchSpinner(0); // Clear batch spinner
-                } else {
+                if (position > 0) {
                     int selectedCourseId = courseList.get(position - 1).getCourse_id();
-                    setupBatchSpinner(selectedCourseId);
+                    fetchBatches(selectedCourseId);
+                } else {
+                    batchList.clear();
+                    setupBatchSpinner();
                 }
             }
 
@@ -149,88 +177,83 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void setupBatchSpinner(int courseId) {
+    private void setupBatchSpinner() {
         List<String> batchNames = new ArrayList<>();
-        batchNames.add("Select Batch"); // Default prompt
-        for (Batch b : batchList) {
-            if (b.getCourse_id() == courseId) batchNames.add(b.getBatchname());
-        }
+        batchNames.add("Select Batch");
+        for (Batch b : batchList) batchNames.add(b.getBatchname());
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, batchNames) {
-            @Override
-            public boolean isEnabled(int position) {
-                return true;
-            }
-
-            @Override
-            public View getDropDownView(int position, View convertView, android.view.ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view;
-                if (position == 0) {
-                    tv.setTextColor(getResources().getColor(android.R.color.darker_gray)); // default prompt grey
-                } else {
-                    tv.setTextColor(getResources().getColor(android.R.color.black)); // all other black
-                }
-                return tv;
-            }
-        };
-
+                android.R.layout.simple_spinner_item, batchNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerBatch.setAdapter(adapter);
     }
+
 
     private void registerUser() {
         String name = etName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
-        String confirmPassword = etConfirmPassword.getText().toString().trim();
+
 
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "All fields are required!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (!password.equals(confirmPassword)) {
-            Toast.makeText(this, "Passwords do not match!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (spinnerCourse.getSelectedItemPosition() == 0) {
+
+        int selectedCoursePosition = spinnerCourse.getSelectedItemPosition();
+        int selectedBatchPosition = spinnerBatch.getSelectedItemPosition();
+
+        if (selectedCoursePosition <= 0) {
             Toast.makeText(this, "Please select a course", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (spinnerBatch.getSelectedItemPosition() == 0) {
+        if (selectedBatchPosition <= 0) {
             Toast.makeText(this, "Please select a batch", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        int courseId = courseList.get(spinnerCourse.getSelectedItemPosition() - 1).getCourse_id();
-        int batchId = -1;
-        String batchName = spinnerBatch.getSelectedItem().toString();
-        for (Batch b : batchList) {
-            if (b.getBatchname().equals(batchName) && b.getCourse_id() == courseId) {
-                batchId = b.getBatch_id();
-                break;
-            }
+        int selectedCourseId = courseList.get(selectedCoursePosition - 1).getCourse_id();
+        int selectedBatchId = batchList.get(selectedBatchPosition - 1).getBatch_id();
+
+        RegisterRequest request = new RegisterRequest(name, email, password, selectedCourseId, selectedBatchId);
+
+        // 🔑 Token Retrieve
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        String token = prefs.getString("token", null);
+
+        if (token == null) {
+            Toast.makeText(this, "Token missing! Please login again", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        RegisterRequest request = new RegisterRequest(name, email, password, courseId, batchId);
+        String authHeader = "Bearer " + token;
 
-        registerApiService.registerUser(request).enqueue(new Callback<RegisterResponse>() {
+        registerApiService.registerUser(request, authHeader).enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(RegisterActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                    Toast.makeText(RegisterActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    startActivity(intent);
                     finish();
                 } else {
-                    Toast.makeText(RegisterActivity.this, "Registration failed!", Toast.LENGTH_SHORT).show();
+                    String errorMessage = "Registration failed!";
+                    try {
+                        if (response.errorBody() != null) {
+                            errorMessage = response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<RegisterResponse> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+
     }
 }

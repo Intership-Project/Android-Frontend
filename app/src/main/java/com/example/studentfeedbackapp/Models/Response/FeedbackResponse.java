@@ -1,4 +1,6 @@
-package com.example.studentfeedbackapp.Models.Request;
+package com.example.studentfeedbackapp.Models.Response;
+
+import com.example.studentfeedbackapp.Models.Request.FeedbackType;
 
 import java.util.List;
 

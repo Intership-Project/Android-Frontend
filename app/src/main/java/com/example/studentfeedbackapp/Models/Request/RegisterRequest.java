@@ -1,25 +1,76 @@
 package com.example.studentfeedbackapp.Models.Request;
 
-public class RegisterRequest {
-    private String studentname;
-    private String email;
-    private String password;
-    private int course_id;
-    private int batch_id;
+import com.google.gson.annotations.SerializedName;
 
-    // Correct constructor
-    public RegisterRequest(String studentname, String email, String password, int course_id, int batch_id) {
-        this.studentname = studentname;
-        this.email = email;
-        this.password = password;
-        this.course_id = course_id;
-        this.batch_id = batch_id;
+
+
+
+
+    public class RegisterRequest {
+        @SerializedName("studentname") // backend jo expect karta hai, wahi name
+        private String studentname;
+
+        @SerializedName("email")
+        private String email;
+
+        @SerializedName("password")
+        private String password;
+
+        @SerializedName("course_id")
+        private int courseId;
+
+        @SerializedName("batch_id")
+        private int batchId;
+
+        public RegisterRequest(String studentname, String email, String password, int courseId, int batchId) {
+            this.studentname = studentname;
+            this.email = email;
+            this.password = password;
+            this.courseId = courseId;
+            this.batchId = batchId;
+        }
+
+        public String getStudentname() {
+            return studentname;
+        }
+
+        public void setStudentname(String studentname) {
+            this.studentname = studentname;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public int getCourseId() {
+            return courseId;
+        }
+
+        public void setCourseId(int courseId) {
+            this.courseId = courseId;
+        }
+
+        public int getBatchId() {
+            return batchId;
+        }
+
+        public void setBatchId(int batchId) {
+            this.batchId = batchId;
+        }
     }
 
-    // Optional: Getters
-    public String getStudentname() { return studentname; }
-    public String getEmail() { return email; }
-    public String getPassword() { return password; }
-    public int getCourse_id() { return course_id; }
-    public int getBatch_id() { return batch_id; }
-}
+
+
+

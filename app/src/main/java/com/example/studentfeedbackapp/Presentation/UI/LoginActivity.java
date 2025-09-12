@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.studentfeedbackapp.MainActivity;
@@ -65,6 +66,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 loginUser(email, password);
+
+
             }
         });
 
@@ -94,10 +97,18 @@ public class LoginActivity extends AppCompatActivity {
                         String token = loginResponse.getData().getToken();
                         String studentName = loginResponse.getData().getStudentname();
 
+                        // ✅ Token ko SharedPreferences me save karo
+                        getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
+                                .edit()
+                                .putString("token", token)
+                                .apply();
+                        Log.d("TOKEN_SAVE", "Token saved: " + token);
+
+
                         Toast.makeText(LoginActivity.this, "Welcome " + studentName, Toast.LENGTH_SHORT).show();
 
                         // ✅ Go to MainActivity
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, StudentDashboard.class);
                         intent.putExtra("token", token);
                         startActivity(intent);
                         finish();

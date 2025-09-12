@@ -108,14 +108,14 @@
                     android:id="@+id/tvName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Name: Rupali Dhakite"
+                    android:text=""
                     android:textColor="@android:color/black" />
 
                 <TextView
                     android:id="@+id/tvEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Email: Rupali@1323"
+                    android:text=""
                     android:textColor="@android:color/black" />
             </LinearLayout>
         </TableRow>

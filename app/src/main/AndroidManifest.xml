@@ -18,18 +18,12 @@
         <activity
             android:name=".Presentation.UI.StudentDashboard"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Presentation.UI.FeedbackForm"
             android:exported="false" />
-        <activity
-            android:name=".Presentation.UI.StudentDashboardActivity"
-            android:exported="false" />
+
         <activity
             android:name=".Presentation.UI.ChangePasswordActivity"
             android:exported="false" />
@@ -41,7 +35,14 @@
             android:exported="false" />
         <activity
             android:name=".Presentation.UI.LoginActivity"
-            android:exported="false" />
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
         <activity
             android:name=".Presentation.UI.RegisterActivity"
             android:exported="false" />
