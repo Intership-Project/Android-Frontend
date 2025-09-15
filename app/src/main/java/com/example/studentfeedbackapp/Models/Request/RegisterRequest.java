@@ -27,6 +27,7 @@ import com.google.gson.annotations.SerializedName;
             this.email = email;
             this.password = password;
             this.courseId = courseId;
+            
             this.batchId = batchId;
         }
 

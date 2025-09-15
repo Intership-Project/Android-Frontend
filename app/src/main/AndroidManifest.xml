@@ -33,6 +33,10 @@
         <activity
             android:name=".Presentation.UI.DashboardActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".Presentation.UI.ForgotPasswordActivity"
+            android:exported="false" />
         <activity
             android:name=".Presentation.UI.LoginActivity"
             android:exported="true" >
