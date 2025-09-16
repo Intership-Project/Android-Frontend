@@ -1,9 +1,10 @@
 package com.example.studentfeedbackapp.Presentation.UI;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,12 +30,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class StudentDashboard extends AppCompatActivity {
-    private Spinner spinnerFeedbackType;
-    private Spinner spinnerModuleType;
+
+    private Spinner spinnerFeedbackType, spinnerModuleType;
     private TextView tvName, tvEmail;
+    private Button btnViewFeedbackForm;
+
     private StudentDashboardApiService studentDashboardApiService;
     private FeedbackModultypeApiService feedbackModultypeApiService;
-    private List<String> feedbackNames = new ArrayList<>(); // Spinner ke liye sirf names
+
+    private List<FeedbackType> feedbackTypeList = new ArrayList<>();
+    private List<FeedbackModuleType> moduleTypeList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,50 +51,60 @@ public class StudentDashboard extends AppCompatActivity {
         spinnerModuleType = findViewById(R.id.spinnerModuleType);
         tvName = findViewById(R.id.tvName);
         tvEmail = findViewById(R.id.tvEmail);
+        btnViewFeedbackForm = findViewById(R.id.btnViewFeedbackForm);
 
         studentDashboardApiService = RetrofitClient.getClient().create(StudentDashboardApiService.class);
         feedbackModultypeApiService = RetrofitClient.getClient().create(FeedbackModultypeApiService.class);
-                 //
-        // 🔑 Profile data load karo
-        loadStudentProfile();
 
+        loadStudentProfile();
         loadFeedbackTypes();
         loadFeedbackModuleTypes();
 
+        btnViewFeedbackForm.setOnClickListener(v -> openFeedbackFormIfSelected());
+    }
+
+    private void openFeedbackFormIfSelected() {
+        int feedbackPos = spinnerFeedbackType.getSelectedItemPosition();
+        int modulePos = spinnerModuleType.getSelectedItemPosition();
+
+        if (feedbackPos >= 0 && modulePos >= 0 && !feedbackTypeList.isEmpty() && !moduleTypeList.isEmpty()) {
+            FeedbackType selectedFeedback = feedbackTypeList.get(feedbackPos);
+            FeedbackModuleType selectedModule = moduleTypeList.get(modulePos);
+
+            // Pass extras to FeedbackForm
+            Intent intent = new Intent(StudentDashboard.this, FeedbackForm.class);
+            intent.putExtra("feedbackTypeId", selectedFeedback.getFeedbacktype_id());
+            intent.putExtra("moduleTypeId", selectedModule.getFeedbackModuleTypeId());
+
+
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Please select both Feedback Type and Module", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadFeedbackTypes() {
-
         Call<FeedbackResponse> call = studentDashboardApiService.getFeedbackTypes();
         call.enqueue(new Callback<FeedbackResponse>() {
             @Override
             public void onResponse(Call<FeedbackResponse> call, Response<FeedbackResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<FeedbackType> feedbackList = response.body().getData();
-                    feedbackNames.clear();
-                    for (FeedbackType f : feedbackList) {
-                        feedbackNames.add(f.getFbtypename()); // Spinner me show karne ke liye
-                    }
-                    setSpinner(feedbackNames);
-                } else {
-                    Toast.makeText(com.example.studentfeedbackapp.Presentation.UI.StudentDashboard.this, "Failed to fetch data", Toast.LENGTH_SHORT).show();
+                    feedbackTypeList = response.body().getData();
+                    List<String> feedbackNames = new ArrayList<>();
+                    for (FeedbackType f : feedbackTypeList) feedbackNames.add(f.getFbtypename());
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(StudentDashboard.this,
+                            android.R.layout.simple_spinner_item, feedbackNames);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerFeedbackType.setAdapter(adapter);
                 }
             }
 
             @Override
             public void onFailure(Call<FeedbackResponse> call, Throwable t) {
-                Toast.makeText(com.example.studentfeedbackapp.Presentation.UI.StudentDashboard.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(StudentDashboard.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
-    private void setSpinner(List<String> feedbackNames) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, feedbackNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerFeedbackType.setAdapter(adapter);
-    }
-
-
 
     private void loadFeedbackModuleTypes() {
         Call<FeedbackModuleResponse> call = feedbackModultypeApiService.getFeedbackModuleTypes();
@@ -97,12 +112,13 @@ public class StudentDashboard extends AppCompatActivity {
             @Override
             public void onResponse(Call<FeedbackModuleResponse> call, Response<FeedbackModuleResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<FeedbackModuleType> moduleList = response.body().getData();
+                    moduleTypeList = response.body().getData();
                     List<String> moduleNames = new ArrayList<>();
-                    for (FeedbackModuleType m : moduleList) {
-                        moduleNames.add(m.getFbModuleTypeName());
-                    }
-                    setSpinnerModule(moduleNames);
+                    for (FeedbackModuleType m : moduleTypeList) moduleNames.add(m.getFbModuleTypeName());
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(StudentDashboard.this,
+                            androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, moduleNames);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerModuleType.setAdapter(adapter);
                 }
             }
 
@@ -113,40 +129,21 @@ public class StudentDashboard extends AppCompatActivity {
         });
     }
 
-    private void setSpinnerModule(List<String> moduleNames) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, moduleNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerModuleType.setAdapter(adapter);
-    }
-
     private void loadStudentProfile() {
-        // SharedPreferences se token get karo
         SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         String token = prefs.getString("token", "");
-
         if (token.isEmpty()) {
             Toast.makeText(this, "Token missing! Please login again.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // API call with Authorization header
         Call<ProfileResponse> call = studentDashboardApiService.getStudentProfile("Bearer " + token);
         call.enqueue(new Callback<ProfileResponse>() {
             @Override
             public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    String name = response.body().getData().getStudentname();
-                    String email = response.body().getData().getEmail();
-
-                    // TextViews me set karo
-                    tvName.setText("Name: " + name);
-                    tvEmail.setText("Email: " + email);
-                } else {
-                    Log.e("PROFILE_ERROR", "Failed to load profile | Code: "
-                            + response.code() + " | Message: " + response.message());
-
-                    Toast.makeText(StudentDashboard.this, "Failed to load profile", Toast.LENGTH_SHORT).show();
+                    tvName.setText("Name: " + response.body().getData().getStudentname());
+                    tvEmail.setText("Email: " + response.body().getData().getEmail());
                 }
             }
 

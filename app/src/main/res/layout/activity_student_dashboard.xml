@@ -121,4 +121,14 @@
         </TableRow>
     </TableLayout>
 
+    <Button
+        android:id="@+id/btnViewFeedbackForm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Feedbackform"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/rounded_button"
+        android:padding="14dp"
+        android:layout_marginTop="25dp"/>
+
 </LinearLayout>
