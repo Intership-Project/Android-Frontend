@@ -7,7 +7,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface ScheduleFeedbackApiService {
-    @GET("schedulefeedback/:id")
+    @GET("schedulefeedback")
 
     Call<ScheduleFeedbackResponse> getScheduleFeedback();
 }
