@@ -3,6 +3,8 @@ package com.example.studentfeedbackapp.Presentation.UI;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -41,6 +43,8 @@ public class StudentDashboard extends AppCompatActivity {
     private List<FeedbackType> feedbackTypeList = new ArrayList<>();
     private List<FeedbackModuleType> moduleTypeList = new ArrayList<>();
 
+    private static final String TAG = "StudentDashboard";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +62,21 @@ public class StudentDashboard extends AppCompatActivity {
 
         loadStudentProfile();
         loadFeedbackTypes();
-        loadFeedbackModuleTypes();
+
+        spinnerFeedbackType.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                if (!feedbackTypeList.isEmpty() && position < feedbackTypeList.size()) {
+                    FeedbackType selectedFeedback = feedbackTypeList.get(position);
+                    Log.d(TAG, "Selected FeedbackType: " + selectedFeedback.getFbtypename() +
+                            " (ID: " + selectedFeedback.getFeedbacktype_id() + ")");
+                    loadModuleTypesByFeedbackType(selectedFeedback.getFeedbacktype_id());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
 
         btnViewFeedbackForm.setOnClickListener(v -> openFeedbackFormIfSelected());
     }
@@ -71,12 +89,9 @@ public class StudentDashboard extends AppCompatActivity {
             FeedbackType selectedFeedback = feedbackTypeList.get(feedbackPos);
             FeedbackModuleType selectedModule = moduleTypeList.get(modulePos);
 
-            // Pass extras to FeedbackForm
             Intent intent = new Intent(StudentDashboard.this, FeedbackForm.class);
             intent.putExtra("feedbackTypeId", selectedFeedback.getFeedbacktype_id());
             intent.putExtra("moduleTypeId", selectedModule.getFeedbackModuleTypeId());
-
-
             startActivity(intent);
         } else {
             Toast.makeText(this, "Please select both Feedback Type and Module", Toast.LENGTH_SHORT).show();
@@ -89,42 +104,67 @@ public class StudentDashboard extends AppCompatActivity {
             @Override
             public void onResponse(Call<FeedbackResponse> call, Response<FeedbackResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    feedbackTypeList = response.body().getData();
+                    feedbackTypeList.clear();
+                    feedbackTypeList.addAll(response.body().getData());
+
                     List<String> feedbackNames = new ArrayList<>();
-                    for (FeedbackType f : feedbackTypeList) feedbackNames.add(f.getFbtypename());
+                    for (FeedbackType f : feedbackTypeList) {
+                        feedbackNames.add(f.getFbtypename());
+                        Log.d(TAG, "Loaded FeedbackType: " + f.getFbtypename());
+                    }
+
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(StudentDashboard.this,
                             android.R.layout.simple_spinner_item, feedbackNames);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerFeedbackType.setAdapter(adapter);
+                } else {
+                    Toast.makeText(StudentDashboard.this, "Failed to load Feedback Types", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<FeedbackResponse> call, Throwable t) {
                 Toast.makeText(StudentDashboard.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "FeedbackTypes API Failure", t);
             }
         });
     }
 
-    private void loadFeedbackModuleTypes() {
-        Call<FeedbackModuleResponse> call = feedbackModultypeApiService.getFeedbackModuleTypes();
+    private void loadModuleTypesByFeedbackType(int feedbackTypeId) {
+        Call<FeedbackModuleResponse> call = feedbackModultypeApiService.getFeedbackModulesByFeedbackType(feedbackTypeId);
         call.enqueue(new Callback<FeedbackModuleResponse>() {
             @Override
             public void onResponse(Call<FeedbackModuleResponse> call, Response<FeedbackModuleResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    moduleTypeList = response.body().getData();
+                    moduleTypeList.clear();
+                    // ✅ Correctly adding list from response
+                    moduleTypeList.addAll(response.body().getData());
+
+                    if (moduleTypeList.isEmpty()) {
+                        Toast.makeText(StudentDashboard.this, "No Module Types found for this Feedback Type", Toast.LENGTH_SHORT).show();
+                        spinnerModuleType.setAdapter(null);
+                        return;
+                    }
+
                     List<String> moduleNames = new ArrayList<>();
-                    for (FeedbackModuleType m : moduleTypeList) moduleNames.add(m.getFbModuleTypeName());
+                    for (FeedbackModuleType m : moduleTypeList) {
+                        moduleNames.add(m.getFbModuleTypeName());
+                        Log.d(TAG, "Loaded ModuleType: " + m.getFbModuleTypeName());
+                    }
+
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(StudentDashboard.this,
-                            androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, moduleNames);
+                            android.R.layout.simple_spinner_item, moduleNames);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerModuleType.setAdapter(adapter);
+                } else {
+                    Toast.makeText(StudentDashboard.this, "Failed to load Module Types", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<FeedbackModuleResponse> call, Throwable t) {
                 Toast.makeText(StudentDashboard.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "ModuleTypes API Failure", t);
             }
         });
     }
@@ -144,13 +184,17 @@ public class StudentDashboard extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     tvName.setText("Name: " + response.body().getData().getStudentname());
                     tvEmail.setText("Email: " + response.body().getData().getEmail());
+                } else {
+                    Toast.makeText(StudentDashboard.this, "Failed to load profile", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ProfileResponse> call, Throwable t) {
                 Toast.makeText(StudentDashboard.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Profile API Failure", t);
             }
         });
     }
+
 }
