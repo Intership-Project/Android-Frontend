@@ -1,10 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Presentation.UI.FeedbackFormActivity">
+    android:orientation="vertical"
+    android:padding="20dp"
+    tools:context=".Presentation.UI.FeedbackForm">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Faculty Name -->
+            <TextView
+                android:id="@+id/txtfaculty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="25sp"
+                android:background="@drawable/rounded_edittext"
+                android:padding="10dp"
+                android:layout_marginTop="20dp" />
+
+            <!-- Subject Name -->
+            <TextView
+                android:id="@+id/txtsubject"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="25sp"
+                android:background="@drawable/rounded_edittext"
+                android:padding="10dp"
+                android:layout_marginTop="10dp" />
+
+            <!-- Questions Header -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Questions"
+                android:textColor="#F40B0B"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginTop="25dp" />
+
+            <!-- Question 1 -->
+            <TextView
+                android:id="@+id/tvQuestion1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Question 1 will appear here"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingBottom="8dp" />
+
+            <RadioGroup
+                android:id="@+id/rgOptions1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton android:id="@+id/rbQ1Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
+                <RadioButton android:id="@+id/rbQ1Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
+                <RadioButton android:id="@+id/rbQ1Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
+                <RadioButton android:id="@+id/rbQ1Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
+            </RadioGroup>
+
+            <!-- Question 2 -->
+            <TextView
+                android:id="@+id/tvQuestion2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Question 2 will appear here"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingBottom="8dp" />
+
+            <RadioGroup
+                android:id="@+id/rgOptions2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton android:id="@+id/rbQ2Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
+                <RadioButton android:id="@+id/rbQ2Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
+                <RadioButton android:id="@+id/rbQ2Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
+                <RadioButton android:id="@+id/rbQ2Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
+            </RadioGroup>
+
+            <!-- Question 3 -->
+            <TextView
+                android:id="@+id/tvQuestion3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Question 3 will appear here"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingBottom="8dp" />
+
+            <RadioGroup
+                android:id="@+id/rgOptions3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton android:id="@+id/rbQ3Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
+                <RadioButton android:id="@+id/rbQ3Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
+                <RadioButton android:id="@+id/rbQ3Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
+                <RadioButton android:id="@+id/rbQ3Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
+            </RadioGroup>
+
+            <!-- Question 4 -->
+            <TextView
+                android:id="@+id/tvQuestion4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Question 4 will appear here"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingBottom="8dp" />
+
+            <RadioGroup
+                android:id="@+id/rgOptions4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton android:id="@+id/rbQ4Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
+                <RadioButton android:id="@+id/rbQ4Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
+                <RadioButton android:id="@+id/rbQ4Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
+                <RadioButton android:id="@+id/rbQ4Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
+            </RadioGroup>
+
+            <!-- Question 5 -->
+            <TextView
+                android:id="@+id/tvQuestion5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Question 5 will appear here"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingBottom="8dp" />
+
+            <RadioGroup
+                android:id="@+id/rgOptions5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton android:id="@+id/rbQ5Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
+                <RadioButton android:id="@+id/rbQ5Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
+                <RadioButton android:id="@+id/rbQ5Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
+                <RadioButton android:id="@+id/rbQ5Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
+            </RadioGroup>
+
+            <!-- Comment box -->
+            <EditText
+                android:id="@+id/edtcomment"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Comment"
+                android:layout_marginTop="25dp"/>
+
+            <Button
+                android:id="@+id/btnSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Submit"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/rounded_button"
+                android:padding="14dp"
+                android:layout_marginBottom="16dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

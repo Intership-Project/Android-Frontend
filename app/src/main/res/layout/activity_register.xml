@@ -80,18 +80,6 @@
             android:textColorHint="@android:color/black"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Confirm Password -->
-        <EditText
-            android:id="@+id/etConfirmPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Confirm Password"
-            android:inputType="textPassword"
-            android:background="@drawable/rounded_edittext"
-            android:padding="12dp"
-            android:textColor="@android:color/black"
-            android:textColorHint="@android:color/black"
-            android:layout_marginBottom="24dp"/>
 
         <!-- Submit Button -->
         <Button
