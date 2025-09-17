@@ -65,10 +65,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <RadioButton android:id="@+id/rbQ1Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 1"/>
-                <RadioButton android:id="@+id/rbQ1Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 2"/>
-                <RadioButton android:id="@+id/rbQ1Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 3"/>
-                <RadioButton android:id="@+id/rbQ1Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 4"/>
+                <RadioButton android:id="@+id/rbQ1Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
+                <RadioButton android:id="@+id/rbQ1Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
+                <RadioButton android:id="@+id/rbQ1Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
+                <RadioButton android:id="@+id/rbQ1Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
             </RadioGroup>
 
             <!-- Question 2 -->
@@ -87,10 +87,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <RadioButton android:id="@+id/rbQ2Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 1"/>
-                <RadioButton android:id="@+id/rbQ2Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 2"/>
-                <RadioButton android:id="@+id/rbQ2Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 3"/>
-                <RadioButton android:id="@+id/rbQ2Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 4"/>
+                <RadioButton android:id="@+id/rbQ2Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
+                <RadioButton android:id="@+id/rbQ2Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
+                <RadioButton android:id="@+id/rbQ2Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
+                <RadioButton android:id="@+id/rbQ2Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
             </RadioGroup>
 
             <!-- Question 3 -->
@@ -109,10 +109,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <RadioButton android:id="@+id/rbQ3Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 1"/>
-                <RadioButton android:id="@+id/rbQ3Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 2"/>
-                <RadioButton android:id="@+id/rbQ3Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 3"/>
-                <RadioButton android:id="@+id/rbQ3Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 4"/>
+                <RadioButton android:id="@+id/rbQ3Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
+                <RadioButton android:id="@+id/rbQ3Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
+                <RadioButton android:id="@+id/rbQ3Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
+                <RadioButton android:id="@+id/rbQ3Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
             </RadioGroup>
 
             <!-- Question 4 -->
@@ -131,10 +131,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <RadioButton android:id="@+id/rbQ4Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 1"/>
-                <RadioButton android:id="@+id/rbQ4Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 2"/>
-                <RadioButton android:id="@+id/rbQ4Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 3"/>
-                <RadioButton android:id="@+id/rbQ4Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 4"/>
+                <RadioButton android:id="@+id/rbQ4Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
+                <RadioButton android:id="@+id/rbQ4Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
+                <RadioButton android:id="@+id/rbQ4Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
+                <RadioButton android:id="@+id/rbQ4Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
             </RadioGroup>
 
             <!-- Question 5 -->
@@ -153,10 +153,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <RadioButton android:id="@+id/rbQ5Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 1"/>
-                <RadioButton android:id="@+id/rbQ5Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 2"/>
-                <RadioButton android:id="@+id/rbQ5Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 3"/>
-                <RadioButton android:id="@+id/rbQ5Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Option 4"/>
+                <RadioButton android:id="@+id/rbQ5Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
+                <RadioButton android:id="@+id/rbQ5Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
+                <RadioButton android:id="@+id/rbQ5Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
+                <RadioButton android:id="@+id/rbQ5Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
             </RadioGroup>
 
             <!-- Comment box -->
@@ -166,6 +166,16 @@
                 android:layout_height="50dp"
                 android:hint="Comment"
                 android:layout_marginTop="25dp"/>
+
+            <Button
+                android:id="@+id/btnSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Submit"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/rounded_button"
+                android:padding="14dp"
+                android:layout_marginBottom="16dp"/>
 
         </LinearLayout>
     </ScrollView>

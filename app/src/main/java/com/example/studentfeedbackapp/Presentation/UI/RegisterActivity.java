@@ -1,7 +1,6 @@
 package com.example.studentfeedbackapp.Presentation.UI;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.studentfeedbackapp.Models.ApiInterface.RegisterApiService;
 import com.example.studentfeedbackapp.Models.Request.Batch;
 import com.example.studentfeedbackapp.Models.Request.Course;
-import com.example.studentfeedbackapp.Models.Request.RegisterRequest;
 import com.example.studentfeedbackapp.Models.Request.RegisterRequest;
 import com.example.studentfeedbackapp.Models.Response.BatchResponse;
 import com.example.studentfeedbackapp.Models.Response.CourseResponse;
@@ -58,6 +56,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         registerApiService = RetrofitClient.getClient().create(RegisterApiService.class);
 
+        // ✅ Initially disable batch spinner
+        spinnerBatch.setEnabled(false);
+
         fetchCourses();
 
         btnSubmit.setOnClickListener(v -> registerUser());
@@ -69,70 +70,51 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void fetchCourses() {
-        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-        String token = prefs.getString("token", null);
-        if (token == null) {
-            Toast.makeText(this, "Token missing. Please login again.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String authHeader = "Bearer " + token;
-
-        registerApiService.getCourses(authHeader).enqueue(new Callback<CourseResponse>() {
-            @Override
-            public void onResponse(Call<CourseResponse> call, Response<CourseResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    courseList = response.body().getData();
-                    setupCourseSpinner();
-                } else {
-                    String errorMsg = "Failed to load courses!";
-                    try {
-                        if (response.errorBody() != null) {
-                            errorMsg = response.errorBody().string();
+        registerApiService.getCourses()
+                .enqueue(new Callback<CourseResponse>() {
+                    @Override
+                    public void onResponse(Call<CourseResponse> call, Response<CourseResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            courseList = response.body().getData();
+                            setupCourseSpinner();
+                        } else {
+                            Toast.makeText(RegisterActivity.this,
+                                    "Failed to load courses", Toast.LENGTH_SHORT).show();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                    Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<CourseResponse> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                    @Override
+                    public void onFailure(Call<CourseResponse> call, Throwable t) {
+                        Toast.makeText(RegisterActivity.this,
+                                "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
-
     private void fetchBatches(int courseId) {
-        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-        String token = prefs.getString("token", null);
-        if (token == null) {
-            Toast.makeText(this, "Token missing. Please login again.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        Log.d("REGISTER", "Fetching batches for courseId: " + courseId);
 
-        String authHeader = "Bearer " + token;
-
-        registerApiService.getBatches(String.valueOf(courseId), authHeader)
+        registerApiService.getBatches(courseId)
                 .enqueue(new Callback<BatchResponse>() {
                     @Override
                     public void onResponse(Call<BatchResponse> call, Response<BatchResponse> response) {
-                        batchList = new ArrayList<>(); // ✅ Always initialize
+                        batchList.clear();
 
                         if (response.isSuccessful() && response.body() != null) {
                             batchList = response.body().getData();
-
                             if (batchList == null) batchList = new ArrayList<>();
 
-                            if (batchList.isEmpty()) {
-                                Toast.makeText(RegisterActivity.this,
-                                        "No batches found for selected course", Toast.LENGTH_SHORT).show();
-                            }
-
                             setupBatchSpinner();
+
+                            if (batchList.isEmpty()) {
+                                spinnerBatch.setEnabled(false);
+                                Toast.makeText(RegisterActivity.this,
+                                        "No batches found for this course", Toast.LENGTH_SHORT).show();
+                            } else {
+                                spinnerBatch.setEnabled(true);
+                            }
                         } else {
+                            spinnerBatch.setEnabled(false);
                             Toast.makeText(RegisterActivity.this,
                                     "Failed to load batches", Toast.LENGTH_SHORT).show();
                             setupBatchSpinner();
@@ -141,14 +123,14 @@ public class RegisterActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<BatchResponse> call, Throwable t) {
-                        batchList = new ArrayList<>();
+                        batchList.clear();
+                        spinnerBatch.setEnabled(false);
                         setupBatchSpinner();
-                        Toast.makeText(RegisterActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this,
+                                "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
-
-
 
     private void setupCourseSpinner() {
         List<String> courseNames = new ArrayList<>();
@@ -165,15 +147,23 @@ public class RegisterActivity extends AppCompatActivity {
             public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
                 if (position > 0) {
                     int selectedCourseId = courseList.get(position - 1).getCourse_id();
+
+                    batchList.clear();
+                    setupBatchSpinner();
+                    spinnerBatch.setEnabled(false); // disable until data arrives
+
                     fetchBatches(selectedCourseId);
                 } else {
                     batchList.clear();
                     setupBatchSpinner();
+                    spinnerBatch.setEnabled(false);
                 }
             }
 
             @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) { }
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {
+                spinnerBatch.setEnabled(false);
+            }
         });
     }
 
@@ -188,12 +178,10 @@ public class RegisterActivity extends AppCompatActivity {
         spinnerBatch.setAdapter(adapter);
     }
 
-
     private void registerUser() {
         String name = etName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
-
 
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
@@ -217,43 +205,26 @@ public class RegisterActivity extends AppCompatActivity {
 
         RegisterRequest request = new RegisterRequest(name, email, password, selectedCourseId, selectedBatchId);
 
-        // 🔑 Token Retrieve
-        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-        String token = prefs.getString("token", null);
-
-        if (token == null) {
-            Toast.makeText(this, "Token missing! Please login again", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String authHeader = "Bearer " + token;
-
-        registerApiService.registerUser(request, authHeader).enqueue(new Callback<RegisterResponse>() {
-            @Override
-            public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(RegisterActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    String errorMessage = "Registration failed!";
-                    try {
-                        if (response.errorBody() != null) {
-                            errorMessage = response.errorBody().string();
+        registerApiService.registerUser(request)
+                .enqueue(new Callback<RegisterResponse>() {
+                    @Override
+                    public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            Toast.makeText(RegisterActivity.this,
+                                    "Registration Successful", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                            finish();
+                        } else {
+                            Toast.makeText(RegisterActivity.this,
+                                    "Registration failed!", Toast.LENGTH_SHORT).show();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                    Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<RegisterResponse> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-
+                    @Override
+                    public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                        Toast.makeText(RegisterActivity.this,
+                                "Network Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 }
