@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="25dp"
+    android:fitsSystemWindows="true"
     tools:context=".Presentation.UI.StudentDashboard">
     <TextView
         android:layout_width="match_parent"
@@ -29,8 +30,8 @@
 
 
 
-        <TextView
-            android:id="@+id/tvLogout"
+        <Button
+            android:id="@+id/btnLogout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Logout"

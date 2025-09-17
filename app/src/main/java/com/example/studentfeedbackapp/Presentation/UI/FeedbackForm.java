@@ -1,5 +1,6 @@
 package com.example.studentfeedbackapp.Presentation.UI;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -225,6 +226,11 @@ public class FeedbackForm extends AppCompatActivity {
             public void onResponse(Call<FilledFeedbackResponse> call, Response<FilledFeedbackResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(FeedbackForm.this, "Feedback Saved: " + response.body().getStatus(), Toast.LENGTH_SHORT).show();
+                    // ✅ Redirect to success screen
+                    Intent intent = new Intent(FeedbackForm.this,FeedbackSuccess.class);
+                    intent.putExtra("message", "Your feedback has been submitted successfully!");
+                    startActivity(intent);
+
                     finish();
                 } else {
                     Toast.makeText(FeedbackForm.this, "Failed to save feedback", Toast.LENGTH_SHORT).show();

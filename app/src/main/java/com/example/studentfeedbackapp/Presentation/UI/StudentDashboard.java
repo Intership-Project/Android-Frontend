@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -35,7 +34,7 @@ public class StudentDashboard extends AppCompatActivity {
 
     private Spinner spinnerFeedbackType, spinnerModuleType;
     private TextView tvName, tvEmail;
-    private Button btnViewFeedbackForm;
+    private Button btnViewFeedbackForm, btnLogout;
 
     private StudentDashboardApiService studentDashboardApiService;
     private FeedbackModultypeApiService feedbackModultypeApiService;
@@ -56,6 +55,7 @@ public class StudentDashboard extends AppCompatActivity {
         tvName = findViewById(R.id.tvName);
         tvEmail = findViewById(R.id.tvEmail);
         btnViewFeedbackForm = findViewById(R.id.btnViewFeedbackForm);
+        btnLogout = findViewById(R.id.btnLogout);
 
         studentDashboardApiService = RetrofitClient.getClient().create(StudentDashboardApiService.class);
         feedbackModultypeApiService = RetrofitClient.getClient().create(FeedbackModultypeApiService.class);
@@ -65,11 +65,9 @@ public class StudentDashboard extends AppCompatActivity {
 
         spinnerFeedbackType.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(android.widget.AdapterView<?> parent, android.view.View view, int position, long id) {
                 if (!feedbackTypeList.isEmpty() && position < feedbackTypeList.size()) {
                     FeedbackType selectedFeedback = feedbackTypeList.get(position);
-                    Log.d(TAG, "Selected FeedbackType: " + selectedFeedback.getFbtypename() +
-                            " (ID: " + selectedFeedback.getFeedbacktype_id() + ")");
                     loadModuleTypesByFeedbackType(selectedFeedback.getFeedbacktype_id());
                 }
             }
@@ -79,6 +77,18 @@ public class StudentDashboard extends AppCompatActivity {
         });
 
         btnViewFeedbackForm.setOnClickListener(v -> openFeedbackFormIfSelected());
+
+        btnLogout.setOnClickListener(v -> {
+            SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+            prefs.edit().clear().apply(); // Clear token + all data
+
+            Toast.makeText(StudentDashboard.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(StudentDashboard.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
     }
 
     private void openFeedbackFormIfSelected() {
@@ -108,10 +118,7 @@ public class StudentDashboard extends AppCompatActivity {
                     feedbackTypeList.addAll(response.body().getData());
 
                     List<String> feedbackNames = new ArrayList<>();
-                    for (FeedbackType f : feedbackTypeList) {
-                        feedbackNames.add(f.getFbtypename());
-                        Log.d(TAG, "Loaded FeedbackType: " + f.getFbtypename());
-                    }
+                    for (FeedbackType f : feedbackTypeList) feedbackNames.add(f.getFbtypename());
 
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(StudentDashboard.this,
                             android.R.layout.simple_spinner_item, feedbackNames);
@@ -137,20 +144,16 @@ public class StudentDashboard extends AppCompatActivity {
             public void onResponse(Call<FeedbackModuleResponse> call, Response<FeedbackModuleResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     moduleTypeList.clear();
-                    // ✅ Correctly adding list from response
                     moduleTypeList.addAll(response.body().getData());
 
                     if (moduleTypeList.isEmpty()) {
-                        Toast.makeText(StudentDashboard.this, "No Module Types found for this Feedback Type", Toast.LENGTH_SHORT).show();
                         spinnerModuleType.setAdapter(null);
+                        Toast.makeText(StudentDashboard.this, "No Module Types found", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     List<String> moduleNames = new ArrayList<>();
-                    for (FeedbackModuleType m : moduleTypeList) {
-                        moduleNames.add(m.getFbModuleTypeName());
-                        Log.d(TAG, "Loaded ModuleType: " + m.getFbModuleTypeName());
-                    }
+                    for (FeedbackModuleType m : moduleTypeList) moduleNames.add(m.getFbModuleTypeName());
 
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(StudentDashboard.this,
                             android.R.layout.simple_spinner_item, moduleNames);
@@ -174,6 +177,8 @@ public class StudentDashboard extends AppCompatActivity {
         String token = prefs.getString("token", "");
         if (token.isEmpty()) {
             Toast.makeText(this, "Token missing! Please login again.", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
             return;
         }
 
@@ -196,5 +201,4 @@ public class StudentDashboard extends AppCompatActivity {
             }
         });
     }
-
 }

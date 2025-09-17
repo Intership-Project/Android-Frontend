@@ -59,14 +59,12 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         tvRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
             finish();
         });
 
         tvForgotPassword.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
         });
     }
 
@@ -74,26 +72,21 @@ public class LoginActivity extends AppCompatActivity {
         LoginRequest request = new LoginRequest(email, password);
 
         Call<LoginResponse> call = loginApiService.login(request);
-
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     LoginResponse loginResponse = response.body();
 
-                    // Debug: Raw response print
                     Log.d("API_RESPONSE", "Raw Response: " + new Gson().toJson(loginResponse));
 
                     if ("success".equalsIgnoreCase(loginResponse.getStatus())) {
                         String token = loginResponse.getData().getToken();
                         String studentName = loginResponse.getData().getStudentname();
-                        int studentId = loginResponse.getData().getStudentId(); // ✅ Fix
+                        int studentId = loginResponse.getData().getStudentId();
 
-                        Log.d("LOGIN_SUCCESS", "Student ID: " + studentId);
-                        Log.d("LOGIN_SUCCESS", "Token: " + token);
-
-                        // ✅ Save to SharedPreferences
-                        getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                        // Save token + studentId in SharedPreferences (used throughout app)
+                        getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
                                 .edit()
                                 .putString("token", token)
                                 .putInt("student_id", studentId)
@@ -101,8 +94,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         Toast.makeText(LoginActivity.this, "Welcome " + studentName, Toast.LENGTH_SHORT).show();
 
-                        Intent intent = new Intent(LoginActivity.this, StudentDashboard.class);
-                        startActivity(intent);
+                        startActivity(new Intent(LoginActivity.this, StudentDashboard.class));
                         finish();
                     } else {
                         Toast.makeText(LoginActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
