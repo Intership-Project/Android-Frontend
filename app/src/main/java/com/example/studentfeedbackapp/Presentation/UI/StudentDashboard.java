@@ -73,7 +73,8 @@ public class StudentDashboard extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {
+            }
         });
 
         btnViewFeedbackForm.setOnClickListener(v -> openFeedbackFormIfSelected());
@@ -108,6 +109,7 @@ public class StudentDashboard extends AppCompatActivity {
         }
     }
 
+    // Load Feddback Type
     private void loadFeedbackTypes() {
         Call<FeedbackResponse> call = studentDashboardApiService.getFeedbackTypes();
         call.enqueue(new Callback<FeedbackResponse>() {
@@ -153,7 +155,8 @@ public class StudentDashboard extends AppCompatActivity {
                     }
 
                     List<String> moduleNames = new ArrayList<>();
-                    for (FeedbackModuleType m : moduleTypeList) moduleNames.add(m.getFbModuleTypeName());
+                    for (FeedbackModuleType m : moduleTypeList)
+                        moduleNames.add(m.getFbModuleTypeName());
 
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(StudentDashboard.this,
                             android.R.layout.simple_spinner_item, moduleNames);

@@ -68,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // login user
     private void loginUser(String email, String password) {
         LoginRequest request = new LoginRequest(email, password);
 
