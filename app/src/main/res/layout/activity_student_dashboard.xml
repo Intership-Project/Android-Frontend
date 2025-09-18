@@ -1,129 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="25dp"
-    android:fitsSystemWindows="true"
-    tools:context=".Presentation.UI.StudentDashboard">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Welcome To Online Student Feedback System"
-        android:textColor="@android:color/holo_red_dark"
-        android:textSize="16sp"
-        android:gravity="center"
-        android:background="#FFF1F1"
-        android:padding="8dp"
-        android:textStyle="bold" />
+    android:fillViewport="true">
 
-    <!-- Top Row with Change Password & Logout -->
     <LinearLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end"
-        android:padding="4dp">
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:background="#F9F9F9"
+        android:fitsSystemWindows="true"
+        tools:context=".Presentation.UI.StudentDashboard">
 
-
-
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="wrap_content"
+        <!-- Title -->
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Logout"
-            android:textColor="@android:color/holo_green_dark" />
+            android:text="Welcome To Online Student Feedback System"
+            android:textColor="#D32F2F"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:background="@drawable/bg_title_banner"
+            android:padding="12dp"
+            android:textStyle="bold"
+            android:elevation="4dp"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Top Row with Logout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:padding="4dp">
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LOGOUT"
+                android:textAllCaps="true"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#388E3C"
+                android:paddingHorizontal="18dp"
+                android:paddingVertical="8dp"
+                android:elevation="4dp" />
+        </LinearLayout>
+
+        <!-- Content Row -->
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1"
+            android:layout_marginTop="20dp">
+
+            <TableRow>
+
+                <!-- Feedback Type Column -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_card"
+                    android:elevation="6dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Feedback Type"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        android:paddingBottom="8dp" />
+
+                    <Spinner
+                        android:id="@+id/spinnerFeedbackType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:spinnerMode="dropdown" />
+
+                    <Spinner
+                        android:id="@+id/spinnerModuleType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:spinnerMode="dropdown"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+
+                <!-- Profile Column -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_card"
+                    android:elevation="6dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Profile"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        android:paddingBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Name: kk"
+                        android:textSize="14sp"
+                        android:textColor="#444444" />
+
+                    <TextView
+                        android:id="@+id/tvEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email: kk"
+                        android:textSize="14sp"
+                        android:textColor="#444444" />
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+
+        <!-- Main Action Button -->
+        <Button
+            android:id="@+id/btnViewFeedbackForm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="VIEW FEEDBACK FORM"
+            android:textAllCaps="true"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#1976D2"
+            android:padding="14dp"
+            android:layout_marginTop="25dp"
+            android:elevation="6dp" />
+
     </LinearLayout>
-
-    <!-- Content Row -->
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="1"
-        android:layout_marginTop="20dp">
-
-        <TableRow>
-
-            <!-- Feedback Type Column -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="8dp"
-                android:background="@android:color/white"
-                android:elevation="2dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Feedback Type"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black"
-                    android:paddingBottom="8dp" />
-
-                <!-- Spinner for Feedback Type -->
-                <Spinner
-                    android:id="@+id/spinnerFeedbackType"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:spinnerMode="dropdown" />
-
-                <!-- Spinner for Module Type -->
-                <Spinner
-                    android:id="@+id/spinnerModuleType"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:spinnerMode="dropdown"
-                    android:layout_marginTop="8dp" />
-            </LinearLayout>
-
-            <!-- Profile Column -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="8dp"
-                android:background="@android:color/white"
-                android:elevation="2dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Profile"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black"
-                    android:paddingBottom="8dp" />
-
-                <TextView
-                    android:id="@+id/tvName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@android:color/black" />
-
-                <TextView
-                    android:id="@+id/tvEmail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@android:color/black" />
-            </LinearLayout>
-        </TableRow>
-    </TableLayout>
-
-    <Button
-        android:id="@+id/btnViewFeedbackForm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="View Feedbackform"
-        android:textColor="#FFFFFF"
-        android:background="@drawable/rounded_button"
-        android:padding="14dp"
-        android:layout_marginTop="25dp"/>
-
-</LinearLayout>
+</ScrollView>

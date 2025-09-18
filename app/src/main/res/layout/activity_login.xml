@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingStart="24dp"
@@ -11,7 +12,19 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:paddingTop="100dp">
+        android:paddingTop="100dp"
+        tools:ignore="ExtraText">
+
+        <!-- Login Icon -->
+        <ImageView
+            android:id="@+id/ivLoginIcon"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/login"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="Login Icon"
+            android:layout_marginBottom="24dp"/>
+
 
         <!-- Title -->
         <TextView

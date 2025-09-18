@@ -22,6 +22,7 @@ import com.example.studentfeedbackapp.Models.Response.FeedbackResponse;
 import com.example.studentfeedbackapp.Models.Response.ProfileResponse;
 import com.example.studentfeedbackapp.Models.RetrofitClient.RetrofitClient;
 import com.example.studentfeedbackapp.R;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +74,8 @@ public class StudentDashboard extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {
+            }
         });
 
         btnViewFeedbackForm.setOnClickListener(v -> openFeedbackFormIfSelected());
@@ -108,6 +110,7 @@ public class StudentDashboard extends AppCompatActivity {
         }
     }
 
+    // Load Feddback Type
     private void loadFeedbackTypes() {
         Call<FeedbackResponse> call = studentDashboardApiService.getFeedbackTypes();
         call.enqueue(new Callback<FeedbackResponse>() {
@@ -153,7 +156,8 @@ public class StudentDashboard extends AppCompatActivity {
                     }
 
                     List<String> moduleNames = new ArrayList<>();
-                    for (FeedbackModuleType m : moduleTypeList) moduleNames.add(m.getFbModuleTypeName());
+                    for (FeedbackModuleType m : moduleTypeList)
+                        moduleNames.add(m.getFbModuleTypeName());
 
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(StudentDashboard.this,
                             android.R.layout.simple_spinner_item, moduleNames);
@@ -175,30 +179,52 @@ public class StudentDashboard extends AppCompatActivity {
     private void loadStudentProfile() {
         SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         String token = prefs.getString("token", "");
-        if (token.isEmpty()) {
+        Log.d("PROFILE_DEBUG", "Token retrieved: " + token); // 🔥 Add this
+
+        Log.d(TAG, "Token retrieved from SharedPreferences: " + token);
+
+        if (token == null || token.isEmpty()) {
             Toast.makeText(this, "Token missing! Please login again.", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
 
-        Call<ProfileResponse> call = studentDashboardApiService.getStudentProfile("Bearer " + token);
+        // Add "Bearer " prefix for Authorization header
+        String authHeader = "Bearer " + token;
+        Log.d(TAG, "Authorization header: " + authHeader);
+        Log.d("PROFILE_DEBUG", "Authorization header being sent: Bearer " + token);
+        Call<ProfileResponse> call = studentDashboardApiService.getStudentProfile(authHeader);
         call.enqueue(new Callback<ProfileResponse>() {
             @Override
             public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
+                Log.d(TAG, "Response code: " + response.code());
+
                 if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "Profile response body: " + new Gson().toJson(response.body()));
+
                     tvName.setText("Name: " + response.body().getData().getStudentname());
                     tvEmail.setText("Email: " + response.body().getData().getEmail());
                 } else {
-                    Toast.makeText(StudentDashboard.this, "Failed to load profile", Toast.LENGTH_SHORT).show();
+                    String errorMsg = "Failed to load profile";
+                    try {
+                        if (response.errorBody() != null) {
+                            errorMsg += ": " + response.errorBody().string();
+                            Log.e(TAG, "Error body: " + response.errorBody().string());
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error reading errorBody", e);
+                    }
+                    Toast.makeText(StudentDashboard.this, errorMsg, Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ProfileResponse> call, Throwable t) {
-                Toast.makeText(StudentDashboard.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Profile API Failure", t);
+                Toast.makeText(StudentDashboard.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
+
 }
