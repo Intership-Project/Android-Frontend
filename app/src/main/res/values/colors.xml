@@ -1,5 +1,6 @@
 <resources>
     <!-- Existing colors -->
+    <color name="my_primary">#3498db</color>
     <color name="purple_200">#BB86FC</color>
     <color name="purple_500">#6200EE</color>
     <color name="purple_700">#3700B3</color>

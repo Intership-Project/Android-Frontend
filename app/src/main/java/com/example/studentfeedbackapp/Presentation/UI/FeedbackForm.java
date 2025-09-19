@@ -37,11 +37,15 @@ public class FeedbackForm extends AppCompatActivity {
     private Button btnSubmit;
 
     private int scheduleFeedbackId = 0;
+    private int selectedFeedbackTypeId = -1; // theory/practical id from previous screen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback_form);
+
+        // Get feedbackTypeId from Intent
+        selectedFeedbackTypeId = getIntent().getIntExtra("feedbackTypeId", -1);
 
         // Initialize views
         tvFaculty = findViewById(R.id.txtfaculty);
@@ -81,11 +85,28 @@ public class FeedbackForm extends AppCompatActivity {
                         return;
                     }
 
-                    ScheduleFeedbackResponse.FeedbackData schedule = scheduleList.get(0);
-                    scheduleFeedbackId = schedule.getScheduleFeedbackId();
-                    tvFaculty.setText(schedule.getFacultyname());
-                    tvSubject.setText(schedule.getSubjectname());
-                    loadQuestions(schedule.getFeedbacktype_id());
+                    ScheduleFeedbackResponse.FeedbackData selectedSchedule = null;
+
+                    // Filter by selected feedback type id
+                    for (ScheduleFeedbackResponse.FeedbackData schedule : scheduleList) {
+                        if (selectedFeedbackTypeId == -1 || schedule.getFeedbacktype_id() == selectedFeedbackTypeId) {
+                            selectedSchedule = schedule;
+                            break;
+                        }
+                    }
+
+                    if (selectedSchedule == null) {
+                        Toast.makeText(FeedbackForm.this, "No schedule found for selected type", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    scheduleFeedbackId = selectedSchedule.getScheduleFeedbackId();
+                    tvFaculty.setText(selectedSchedule.getFacultyname());
+                    tvSubject.setText(selectedSchedule.getSubjectname());
+
+                    // Load questions for selected feedback type
+                    loadQuestions(selectedSchedule.getFeedbacktype_id());
+
                 } else {
                     Toast.makeText(FeedbackForm.this, "Failed to load schedule", Toast.LENGTH_SHORT).show();
                 }
@@ -140,44 +161,33 @@ public class FeedbackForm extends AppCompatActivity {
         int selectedId = radioGroup.getCheckedRadioButtonId();
         if (selectedId == -1) return 0;
 
-        // Question 1
         if (radioGroup.getId() == R.id.rgOptions1) {
             if (selectedId == R.id.rbQ1Option1) return 1;
             if (selectedId == R.id.rbQ1Option2) return 2;
             if (selectedId == R.id.rbQ1Option3) return 3;
             if (selectedId == R.id.rbQ1Option4) return 4;
-        }
-        // Question 2
-        else if (radioGroup.getId() == R.id.rgOptions2) {
+        } else if (radioGroup.getId() == R.id.rgOptions2) {
             if (selectedId == R.id.rbQ2Option1) return 1;
             if (selectedId == R.id.rbQ2Option2) return 2;
             if (selectedId == R.id.rbQ2Option3) return 3;
             if (selectedId == R.id.rbQ2Option4) return 4;
-        }
-        // Question 3
-        else if (radioGroup.getId() == R.id.rgOptions3) {
+        } else if (radioGroup.getId() == R.id.rgOptions3) {
             if (selectedId == R.id.rbQ3Option1) return 1;
             if (selectedId == R.id.rbQ3Option2) return 2;
             if (selectedId == R.id.rbQ3Option3) return 3;
             if (selectedId == R.id.rbQ3Option4) return 4;
-        }
-        // Question 4
-        else if (radioGroup.getId() == R.id.rgOptions4) {
+        } else if (radioGroup.getId() == R.id.rgOptions4) {
             if (selectedId == R.id.rbQ4Option1) return 1;
             if (selectedId == R.id.rbQ4Option2) return 2;
             if (selectedId == R.id.rbQ4Option3) return 3;
             if (selectedId == R.id.rbQ4Option4) return 4;
-        }
-        // Question 5
-        else if (radioGroup.getId() == R.id.rgOptions5) {
+        } else if (radioGroup.getId() == R.id.rgOptions5) {
             if (selectedId == R.id.rbQ5Option1) return 1;
             if (selectedId == R.id.rbQ5Option2) return 2;
             if (selectedId == R.id.rbQ5Option3) return 3;
             if (selectedId == R.id.rbQ5Option4) return 4;
         }
-
         return 0;
-
     }
 
     private void submitFeedback() {
@@ -207,7 +217,6 @@ public class FeedbackForm extends AppCompatActivity {
             return;
         }
 
-        // Correct average calculation
         int averageRating = Math.round((float) total / answeredCount);
         Log.d("FEEDBACK_FORM", "Total: " + total + ", Count: " + answeredCount + ", AverageRating: " + averageRating);
 
@@ -226,11 +235,9 @@ public class FeedbackForm extends AppCompatActivity {
             public void onResponse(Call<FilledFeedbackResponse> call, Response<FilledFeedbackResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(FeedbackForm.this, "Feedback Saved: " + response.body().getStatus(), Toast.LENGTH_SHORT).show();
-                    // ✅ Redirect to success screen
-                    Intent intent = new Intent(FeedbackForm.this,FeedbackSuccess.class);
+                    Intent intent = new Intent(FeedbackForm.this, FeedbackSuccess.class);
                     intent.putExtra("message", "Your feedback has been submitted successfully!");
                     startActivity(intent);
-
                     finish();
                 } else {
                     Toast.makeText(FeedbackForm.this, "Failed to save feedback", Toast.LENGTH_SHORT).show();
