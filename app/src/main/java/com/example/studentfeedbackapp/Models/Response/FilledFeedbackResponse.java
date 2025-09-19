@@ -2,11 +2,13 @@ package com.example.studentfeedbackapp.Models.Response;
 
 public class FilledFeedbackResponse {
     private String status;
+    private String message;
     private FeedbackData data;
 
     public String getStatus() {
         return status;
     }
+    public String getMessage() { return message; }
 
     public FeedbackData getData() {
         return data;

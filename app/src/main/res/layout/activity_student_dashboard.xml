@@ -14,7 +14,8 @@
         android:padding="20dp"
         android:background="#F9F9F9"
         android:fitsSystemWindows="true"
-        tools:context=".Presentation.UI.StudentDashboard">
+        tools:context=".Presentation.UI.StudentDashboard"
+        tools:ignore="ExtraText">
 
         <!-- Title -->
         <TextView
@@ -56,7 +57,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:stretchColumns="1"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp">
 
             <TableRow>
 
@@ -67,6 +69,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:padding="12dp"
+                    android:layout_marginEnd="8dp"
                     android:background="@drawable/bg_card"
                     android:elevation="6dp">
 
@@ -100,6 +103,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:padding="12dp"
+                    android:layout_marginStart="8dp"
                     android:background="@drawable/bg_card"
                     android:elevation="6dp">
 
@@ -109,6 +113,8 @@
                         android:text="Profile"
                         android:textStyle="bold"
                         android:textSize="16sp"
+                        android:drawableStart="@drawable/person_2_24dp_000000"
+                        android:drawablePadding="10dp"
                         android:textColor="#000000"
                         android:paddingBottom="8dp" />
 
@@ -118,7 +124,8 @@
                         android:layout_height="wrap_content"
                         android:text="Name: kk"
                         android:textSize="14sp"
-                        android:textColor="#444444" />
+                        android:textColor="#444444"
+                        android:layout_marginBottom="4dp" />
 
                     <TextView
                         android:id="@+id/tvEmail"
@@ -141,8 +148,13 @@
             android:textColor="#FFFFFF"
             android:backgroundTint="#1976D2"
             android:padding="14dp"
-            android:layout_marginTop="25dp"
-            android:elevation="6dp" />
+            android:layout_marginTop="30dp" 
+             android:layout_marginBottom="16dp"
+             android:elevation="6dp" />
+
+
+
+
 
     </LinearLayout>
 </ScrollView>

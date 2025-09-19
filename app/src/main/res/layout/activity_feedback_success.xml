@@ -1,20 +1,37 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:background="#FFFFFF">
 
-    <TextView
-        android:id="@+id/tvSuccess"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:text="Feedback Submitted Successfully"
-        android:textColor="#D32F2F"
-        android:textStyle="bold"
-        android:background="@drawable/border_red"
-        android:gravity="center"
-        android:textSize="16sp" />
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- Small image on top -->
+        <ImageView
+            android:id="@+id/ivSuccessIcon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/excellence"
+            android:contentDescription="Success Icon"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Success message -->
+        <TextView
+            android:id="@+id/tvSuccess"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:text="Feedback Submitted Successfully"
+            android:textColor="#D32F2F"
+            android:textStyle="bold"
+            android:background="@drawable/border_red"
+            android:gravity="center"
+            android:textSize="16sp" />
+
+    </LinearLayout>
 
 </RelativeLayout>

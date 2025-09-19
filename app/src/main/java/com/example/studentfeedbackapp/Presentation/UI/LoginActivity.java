@@ -91,7 +91,6 @@ public class LoginActivity extends AppCompatActivity {
                                 .putString("token", token)
                                 .putInt("student_id", studentId)
                                 .apply();
-                        Log.d("LOGIN_TOKEN", "Saved Token: " + token);
 
                         Toast.makeText(LoginActivity.this, "Welcome " + studentName, Toast.LENGTH_SHORT).show();
 

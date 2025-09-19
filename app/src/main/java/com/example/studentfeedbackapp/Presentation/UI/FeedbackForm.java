@@ -105,6 +105,7 @@ public class FeedbackForm extends AppCompatActivity {
         questionApi.getQuestions(feedbackTypeId).enqueue(new Callback<QuestionResponse>() {
             @Override
             public void onResponse(Call<QuestionResponse> call, Response<QuestionResponse> response) {
+                Log.d("FEEDBACK_FORM", "Raw response code = " + response.code());
                 if (response.isSuccessful() && response.body() != null) {
                     List<QuestionResponse.QuestionData> questions = response.body().getData();
 
@@ -223,20 +224,41 @@ public class FeedbackForm extends AppCompatActivity {
 
         call.enqueue(new Callback<FilledFeedbackResponse>() {
             @Override
+
             public void onResponse(Call<FilledFeedbackResponse> call, Response<FilledFeedbackResponse> response) {
+                Log.d("FEEDBACK_FORM", "Raw response code = " + response.code());
+
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(FeedbackForm.this, "Feedback Saved: " + response.body().getStatus(), Toast.LENGTH_SHORT).show();
-                    // ✅ Redirect to success screen
-                    Intent intent = new Intent(FeedbackForm.this,FeedbackSuccess.class);
+                    Log.d("FEEDBACK_FORM", "Response body (parsed) = status: "
+                            + response.body().getStatus()
+                            + ", message: " + response.body().getMessage());
+
+                    Toast.makeText(FeedbackForm.this,
+                            "Feedback Saved: " + response.body().getStatus(),
+                            Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(FeedbackForm.this, FeedbackSuccess.class);
                     intent.putExtra("message", "Your feedback has been submitted successfully!");
                     startActivity(intent);
-
                     finish();
                 } else {
+                    Log.e("FEEDBACK_FORM", "Response unsuccessful. Code = " + response.code());
+
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorJson = response.errorBody().string();
+                            Log.e("FEEDBACK_FORM", "Error body = " + errorJson);
+                        } else {
+                            Log.e("FEEDBACK_FORM", "Error body is null");
+                        }
+                    } catch (Exception e) {
+                        Log.e("FEEDBACK_FORM", "Exception reading error body", e);
+                    }
+
                     Toast.makeText(FeedbackForm.this, "Failed to save feedback", Toast.LENGTH_SHORT).show();
-                    Log.e("FEEDBACK_FORM", "Response null or unsuccessful");
                 }
             }
+
 
             @Override
             public void onFailure(Call<FilledFeedbackResponse> call, Throwable t) {
