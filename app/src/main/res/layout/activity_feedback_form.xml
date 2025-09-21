@@ -17,47 +17,74 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+
+            <!-- Faculty Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Faculty Name"
+                android:textSize="16sp"
+                android:textColor="#2C3E50"
+                android:paddingStart="5dp"
+                android:textStyle="bold"/>
+
             <!-- Faculty Name -->
             <TextView
                 android:id="@+id/txtfaculty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="25sp"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/rounded_edittext"
                 android:padding="10dp"
-                android:layout_marginTop="20dp" />
+                android:text=""
+                android:textSize="20sp"
+                android:textColor="#34495E"/>
+
+
+            <!-- Subject Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Subject Name"
+                android:textSize="16sp"
+                android:textColor="#2C3E50"
+                android:paddingStart="5dp"
+                android:textStyle="bold"/>
 
             <!-- Subject Name -->
             <TextView
                 android:id="@+id/txtsubject"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="25sp"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/rounded_edittext"
                 android:padding="10dp"
-                android:layout_marginTop="10dp" />
+                android:text=""
+                android:textSize="20sp"
+                android:textColor="#34495E"/>
 
             <!-- Questions Header -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
                 android:text="Questions"
                 android:textColor="#F40B0B"
-                android:textStyle="bold"
                 android:textSize="20sp"
-                android:layout_marginTop="25dp" />
+                android:textStyle="bold" />
 
             <!-- Question 1 -->
             <TextView
                 android:id="@+id/tvQuestion1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="#2C3E50"
+                android:paddingBottom="8dp"
                 android:text="Question 1 will appear here"
+                android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:paddingBottom="8dp" />
+                android:textStyle="bold" /> <!-- White text for contrast -->
+
 
             <RadioGroup
                 android:id="@+id/rgOptions1"
@@ -65,10 +92,37 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <RadioButton android:id="@+id/rbQ1Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
-                <RadioButton android:id="@+id/rbQ1Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
-                <RadioButton android:id="@+id/rbQ1Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
-                <RadioButton android:id="@+id/rbQ1Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
+                <RadioButton
+                    android:id="@+id/rbQ1Option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Satisfactory"
+                    android:textStyle="bold"
+                    android:textColor="#E74C3C"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ1Option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Good"
+                    android:textColor="#F1C40F"
+                    android:textStyle="bold"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ1Option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Very Good"
+                    android:textColor="#3498DB"
+                    android:textStyle="bold"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ1Option4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Excellent"
+                    android:textColor="#2ECC71"
+                    android:textStyle="bold"/>
             </RadioGroup>
 
             <!-- Question 2 -->
@@ -76,10 +130,13 @@
                 android:id="@+id/tvQuestion2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Question 2 will appear here"
+                android:background="#2C3E50"
+                android:paddingBottom="8dp"
+                android:text="Question 1 will appear here"
+                android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:paddingBottom="8dp" />
+                android:textStyle="bold" /> <!-- White text for contrast -->
+
 
             <RadioGroup
                 android:id="@+id/rgOptions2"
@@ -87,10 +144,37 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <RadioButton android:id="@+id/rbQ2Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
-                <RadioButton android:id="@+id/rbQ2Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
-                <RadioButton android:id="@+id/rbQ2Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
-                <RadioButton android:id="@+id/rbQ2Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
+                <RadioButton
+                    android:id="@+id/rbQ2Option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Satisfactory"
+                    android:textStyle="bold"
+                    android:textColor="#E74C3C"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ2Option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Good"
+                    android:textColor="#F1C40F"
+                    android:textStyle="bold"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ2Option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Very Good"
+                    android:textColor="#3498DB"
+                    android:textStyle="bold"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ2Option4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Excellent"
+                    android:textColor="#2ECC71"
+                    android:textStyle="bold"/>
             </RadioGroup>
 
             <!-- Question 3 -->
@@ -98,10 +182,13 @@
                 android:id="@+id/tvQuestion3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Question 3 will appear here"
+                android:background="#2C3E50"
+                android:paddingBottom="8dp"
+                android:text="Question 1 will appear here"
+                android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:paddingBottom="8dp" />
+                android:textStyle="bold" /> <!-- White text for contrast -->
+
 
             <RadioGroup
                 android:id="@+id/rgOptions3"
@@ -109,10 +196,37 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <RadioButton android:id="@+id/rbQ3Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
-                <RadioButton android:id="@+id/rbQ3Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
-                <RadioButton android:id="@+id/rbQ3Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
-                <RadioButton android:id="@+id/rbQ3Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
+                <RadioButton
+                    android:id="@+id/rbQ3Option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Satisfactory"
+                    android:textStyle="bold"
+                    android:textColor="#E74C3C"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ3Option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Good"
+                    android:textColor="#F1C40F"
+                    android:textStyle="bold"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ3Option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Very Good"
+                    android:textColor="#3498DB"
+                    android:textStyle="bold"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ3Option4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Excellent"
+                    android:textColor="#2ECC71"
+                    android:textStyle="bold"/>
             </RadioGroup>
 
             <!-- Question 4 -->
@@ -120,10 +234,13 @@
                 android:id="@+id/tvQuestion4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Question 4 will appear here"
+                android:background="#2C3E50"
+                android:paddingBottom="8dp"
+                android:text="Question 1 will appear here"
+                android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:paddingBottom="8dp" />
+                android:textStyle="bold" /> <!-- White text for contrast -->
+
 
             <RadioGroup
                 android:id="@+id/rgOptions4"
@@ -131,10 +248,37 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <RadioButton android:id="@+id/rbQ4Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
-                <RadioButton android:id="@+id/rbQ4Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
-                <RadioButton android:id="@+id/rbQ4Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
-                <RadioButton android:id="@+id/rbQ4Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
+                <RadioButton
+                    android:id="@+id/rbQ4Option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Satisfactory"
+                    android:textStyle="bold"
+                    android:textColor="#E74C3C"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ4Option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Good"
+                    android:textColor="#F1C40F"
+                    android:textStyle="bold"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ4Option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Very Good"
+                    android:textColor="#3498DB"
+                    android:textStyle="bold"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ4Option4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Excellent"
+                    android:textColor="#2ECC71"
+                    android:textStyle="bold"/>
             </RadioGroup>
 
             <!-- Question 5 -->
@@ -142,10 +286,13 @@
                 android:id="@+id/tvQuestion5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Question 5 will appear here"
+                android:background="#2C3E50"
+                android:paddingBottom="8dp"
+                android:text="Question 1 will appear here"
+                android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:paddingBottom="8dp" />
+                android:textStyle="bold" /> <!-- White text for contrast -->
+
 
             <RadioGroup
                 android:id="@+id/rgOptions5"
@@ -153,10 +300,37 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <RadioButton android:id="@+id/rbQ5Option1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Satisfactory"/>
-                <RadioButton android:id="@+id/rbQ5Option2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good"/>
-                <RadioButton android:id="@+id/rbQ5Option3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Very Good"/>
-                <RadioButton android:id="@+id/rbQ5Option4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excellent"/>
+                <RadioButton
+                    android:id="@+id/rbQ5Option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Satisfactory"
+                    android:textStyle="bold"
+                    android:textColor="#E74C3C"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ5Option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Good"
+                    android:textColor="#F1C40F"
+                    android:textStyle="bold"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ5Option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Very Good"
+                    android:textColor="#3498DB"
+                    android:textStyle="bold"/>
+
+                <RadioButton
+                    android:id="@+id/rbQ5Option4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Excellent"
+                    android:textColor="#2ECC71"
+                    android:textStyle="bold"/>
             </RadioGroup>
 
             <!-- Comment box -->
@@ -164,18 +338,18 @@
                 android:id="@+id/edtcomment"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:hint="Comment"
-                android:layout_marginTop="25dp"/>
+                android:layout_marginTop="25dp"
+                android:hint="Comment" />
 
             <Button
                 android:id="@+id/btnSubmit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Submit"
-                android:textColor="#FFFFFF"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/rounded_button"
                 android:padding="14dp"
-                android:layout_marginBottom="16dp"/>
+                android:text="Submit"
+                android:textColor="#FFFFFF" />
 
         </LinearLayout>
     </ScrollView>
