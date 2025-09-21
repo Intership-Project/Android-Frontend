@@ -1,6 +1,7 @@
 package com.example.studentfeedbackapp.Presentation.UI;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -40,19 +41,13 @@ public class LoginActivity extends AppCompatActivity {
         tvRegister = findViewById(R.id.tvRegister);
         tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
-        etEmail.setTextColor(getResources().getColor(android.R.color.black));
-        etEmail.setHintTextColor(getResources().getColor(android.R.color.black));
-        etPassword.setTextColor(getResources().getColor(android.R.color.black));
-        etPassword.setHintTextColor(getResources().getColor(android.R.color.black));
-
         loginApiService = RetrofitClient.getClient().create(LoginApiService.class);
 
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
-
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(LoginActivity.this, "Enter email & password", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Enter email & password", Toast.LENGTH_SHORT).show();
                 return;
             }
             loginUser(email, password);
@@ -68,29 +63,30 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // login user
     private void loginUser(String email, String password) {
         LoginRequest request = new LoginRequest(email, password);
 
-        Call<LoginResponse> call = loginApiService.login(request);
-        call.enqueue(new Callback<LoginResponse>() {
+        loginApiService.login(request).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     LoginResponse loginResponse = response.body();
-
-                    Log.d("API_RESPONSE", "Raw Response: " + new Gson().toJson(loginResponse));
+                    Log.d("API_RESPONSE", new Gson().toJson(loginResponse));
 
                     if ("success".equalsIgnoreCase(loginResponse.getStatus())) {
                         String token = loginResponse.getData().getToken();
                         String studentName = loginResponse.getData().getStudentname();
                         int studentId = loginResponse.getData().getStudentId();
+                        int courseId = loginResponse.getData().getCourseId();
+                        int batchId = loginResponse.getData().getBatchId();
 
-                        // Save token + studentId in SharedPreferences (used throughout app)
-                        getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
-                                .edit()
+                        // Save all details in SharedPreferences
+                        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+                        prefs.edit()
                                 .putString("token", token)
                                 .putInt("student_id", studentId)
+                                .putInt("course_id", courseId)
+                                .putInt("batch_id", batchId)
                                 .apply();
 
                         Toast.makeText(LoginActivity.this, "Welcome " + studentName, Toast.LENGTH_SHORT).show();

@@ -22,6 +22,7 @@ import com.example.studentfeedbackapp.Models.Response.QuestionResponse;
 import com.example.studentfeedbackapp.Models.Response.ScheduleFeedbackResponse;
 import com.example.studentfeedbackapp.Models.RetrofitClient.RetrofitClient;
 import com.example.studentfeedbackapp.R;
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -33,21 +34,19 @@ public class FeedbackForm extends AppCompatActivity {
 
     private TextView tvFaculty, tvSubject, tvQ1, tvQ2, tvQ3, tvQ4, tvQ5;
     private RadioGroup rgOptions1, rgOptions2, rgOptions3, rgOptions4, rgOptions5;
-    private EditText edtcomment;
+    private EditText edtComment;
     private Button btnSubmit;
 
     private int scheduleFeedbackId = 0;
-    private int selectedFeedbackTypeId = -1; // theory/practical id from previous screen
+    private int selectedFeedbackTypeId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback_form);
 
-        // Get feedbackTypeId from Intent
         selectedFeedbackTypeId = getIntent().getIntExtra("feedbackTypeId", -1);
 
-        // Initialize views
         tvFaculty = findViewById(R.id.txtfaculty);
         tvSubject = findViewById(R.id.txtsubject);
         tvQ1 = findViewById(R.id.tvQuestion1);
@@ -62,7 +61,7 @@ public class FeedbackForm extends AppCompatActivity {
         rgOptions4 = findViewById(R.id.rgOptions4);
         rgOptions5 = findViewById(R.id.rgOptions5);
 
-        edtcomment = findViewById(R.id.edtcomment);
+        edtComment = findViewById(R.id.edtcomment);
         btnSubmit = findViewById(R.id.btnSubmit);
 
         loadScheduleAndQuestions();
@@ -74,12 +73,17 @@ public class FeedbackForm extends AppCompatActivity {
         ScheduleFeedbackApiService scheduleApi = RetrofitClient.getClient()
                 .create(ScheduleFeedbackApiService.class);
 
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        int studentCourseId = prefs.getInt("course_id", -1);
+        int batchId = prefs.getInt("batch_id", -1);
+
         scheduleApi.getScheduleFeedback().enqueue(new Callback<ScheduleFeedbackResponse>() {
             @Override
             public void onResponse(Call<ScheduleFeedbackResponse> call, Response<ScheduleFeedbackResponse> response) {
+                Log.d("SCHEDULE_DEBUG_JSON", new Gson().toJson(response.body()));
+
                 if (response.isSuccessful() && response.body() != null) {
                     List<ScheduleFeedbackResponse.FeedbackData> scheduleList = response.body().getData();
-
                     if (scheduleList == null || scheduleList.isEmpty()) {
                         Toast.makeText(FeedbackForm.this, "No schedule found", Toast.LENGTH_SHORT).show();
                         return;
@@ -87,16 +91,33 @@ public class FeedbackForm extends AppCompatActivity {
 
                     ScheduleFeedbackResponse.FeedbackData selectedSchedule = null;
 
-                    // Filter by selected feedback type id
                     for (ScheduleFeedbackResponse.FeedbackData schedule : scheduleList) {
-                        if (selectedFeedbackTypeId == -1 || schedule.getFeedbacktype_id() == selectedFeedbackTypeId) {
+                        Log.d("SCHEDULE_DEBUG", "Matched Schedule -> ID: " + schedule.getScheduleFeedbackId()
+                                + ", Course: " + schedule.getCourse_id()
+                                + ", FeedbackType: " + schedule.getFeedbacktype_id()
+                                + ", Status: " + schedule.getStatus()
+                                + ", Batch: " + schedule.getBatch_id());
+
+                        // Check active + correct course + feedback type
+                        if ((selectedFeedbackTypeId == -1 || schedule.getFeedbacktype_id() == selectedFeedbackTypeId)
+                                && schedule.getCourse_id() == studentCourseId
+                                && "active".equalsIgnoreCase(schedule.getStatus())) {
+
+                            // Lab feedback: batch must match
+                            if (schedule.getFeedbacktype_id() == 2) {
+                                if (schedule.getBatch_id() == null || schedule.getBatch_id() != batchId) {
+                                    continue; // skip if batch not match
+                                }
+                            }
+
                             selectedSchedule = schedule;
+                            Log.d("SCHEDULE_DEBUG", "✅ Selected Schedule: " + schedule.getScheduleFeedbackId());
                             break;
                         }
                     }
 
                     if (selectedSchedule == null) {
-                        Toast.makeText(FeedbackForm.this, "No schedule found for selected type", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FeedbackForm.this, "No active schedule found for your course/batch", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -104,9 +125,7 @@ public class FeedbackForm extends AppCompatActivity {
                     tvFaculty.setText(selectedSchedule.getFacultyname());
                     tvSubject.setText(selectedSchedule.getSubjectname());
 
-                    // Load questions for selected feedback type
                     loadQuestions(selectedSchedule.getFeedbacktype_id());
-
                 } else {
                     Toast.makeText(FeedbackForm.this, "Failed to load schedule", Toast.LENGTH_SHORT).show();
                 }
@@ -128,7 +147,6 @@ public class FeedbackForm extends AppCompatActivity {
             public void onResponse(Call<QuestionResponse> call, Response<QuestionResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<QuestionResponse.QuestionData> questions = response.body().getData();
-
                     if (questions == null || questions.isEmpty()) {
                         Toast.makeText(FeedbackForm.this, "No questions found", Toast.LENGTH_SHORT).show();
                         return;
@@ -161,49 +179,51 @@ public class FeedbackForm extends AppCompatActivity {
         int selectedId = radioGroup.getCheckedRadioButtonId();
         if (selectedId == -1) return 0;
 
-        if (radioGroup.getId() == R.id.rgOptions1) {
+        if (radioGroup == rgOptions1) {
             if (selectedId == R.id.rbQ1Option1) return 1;
             if (selectedId == R.id.rbQ1Option2) return 2;
             if (selectedId == R.id.rbQ1Option3) return 3;
             if (selectedId == R.id.rbQ1Option4) return 4;
-        } else if (radioGroup.getId() == R.id.rgOptions2) {
+        } else if (radioGroup == rgOptions2) {
             if (selectedId == R.id.rbQ2Option1) return 1;
             if (selectedId == R.id.rbQ2Option2) return 2;
             if (selectedId == R.id.rbQ2Option3) return 3;
             if (selectedId == R.id.rbQ2Option4) return 4;
-        } else if (radioGroup.getId() == R.id.rgOptions3) {
+        } else if (radioGroup == rgOptions3) {
             if (selectedId == R.id.rbQ3Option1) return 1;
             if (selectedId == R.id.rbQ3Option2) return 2;
             if (selectedId == R.id.rbQ3Option3) return 3;
             if (selectedId == R.id.rbQ3Option4) return 4;
-        } else if (radioGroup.getId() == R.id.rgOptions4) {
+        } else if (radioGroup == rgOptions4) {
             if (selectedId == R.id.rbQ4Option1) return 1;
             if (selectedId == R.id.rbQ4Option2) return 2;
             if (selectedId == R.id.rbQ4Option3) return 3;
             if (selectedId == R.id.rbQ4Option4) return 4;
-        } else if (radioGroup.getId() == R.id.rgOptions5) {
+        } else if (radioGroup == rgOptions5) {
             if (selectedId == R.id.rbQ5Option1) return 1;
             if (selectedId == R.id.rbQ5Option2) return 2;
             if (selectedId == R.id.rbQ5Option3) return 3;
             if (selectedId == R.id.rbQ5Option4) return 4;
         }
+
         return 0;
     }
 
     private void submitFeedback() {
-        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         int studentId = prefs.getInt("student_id", -1);
+        int courseId = prefs.getInt("course_id", -1);
+        int batchId = prefs.getInt("batch_id", -1);
+
         if (studentId == -1) {
             Toast.makeText(this, "Student ID not found. Please login again.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String comment = edtcomment.getText().toString().trim();
+        String comment = edtComment.getText().toString().trim();
 
         RadioGroup[] groups = {rgOptions1, rgOptions2, rgOptions3, rgOptions4, rgOptions5};
-        int total = 0;
-        int answeredCount = 0;
-
+        int total = 0, answeredCount = 0;
         for (RadioGroup rg : groups) {
             int rating = getSelectedRating(rg);
             if (rating > 0) {
@@ -211,37 +231,33 @@ public class FeedbackForm extends AppCompatActivity {
                 answeredCount++;
             }
         }
-
         if (answeredCount == 0) {
             Toast.makeText(this, "Please select at least one answer", Toast.LENGTH_SHORT).show();
             return;
         }
 
         int averageRating = Math.round((float) total / answeredCount);
-        Log.d("FEEDBACK_FORM", "Total: " + total + ", Count: " + answeredCount + ", AverageRating: " + averageRating);
 
+        // ✅ Use correct constructor with 6 parameters
         FilledFeedbackRequest request = new FilledFeedbackRequest(
                 studentId,
+                courseId,
+                batchId,
                 scheduleFeedbackId,
                 comment,
                 averageRating
         );
 
         FilledFeedbackService api = RetrofitClient.getClient().create(FilledFeedbackService.class);
-        Call<FilledFeedbackResponse> call = api.submitFeedback(request);
-
-        call.enqueue(new Callback<FilledFeedbackResponse>() {
+        api.submitFeedback(request).enqueue(new Callback<FilledFeedbackResponse>() {
             @Override
             public void onResponse(Call<FilledFeedbackResponse> call, Response<FilledFeedbackResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(FeedbackForm.this, "Feedback Saved: " + response.body().getStatus(), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(FeedbackForm.this, FeedbackSuccess.class);
-                    intent.putExtra("message", "Your feedback has been submitted successfully!");
-                    startActivity(intent);
+                    Toast.makeText(FeedbackForm.this, "Feedback Saved", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(FeedbackForm.this, FeedbackSuccess.class));
                     finish();
                 } else {
                     Toast.makeText(FeedbackForm.this, "Failed to save feedback", Toast.LENGTH_SHORT).show();
-                    Log.e("FEEDBACK_FORM", "Response null or unsuccessful");
                 }
             }
 

@@ -59,6 +59,9 @@ public class ScheduleFeedbackResponse {
         @SerializedName("batchname")
         private String batchname;
 
+        @SerializedName("status")   // ✅ Add status field
+        private String status;
+
         // Getters
         public int getScheduleFeedbackId() { return scheduleFeedbackId; }
         public String getStartDate() { return startDate; }
@@ -73,5 +76,6 @@ public class ScheduleFeedbackResponse {
         public String getFacultyname() { return facultyname; }
         public Integer getBatch_id() { return batch_id; }
         public String getBatchname() { return batchname; }
+        public String getStatus() { return status; } // ✅ Getter for status
     }
 }
