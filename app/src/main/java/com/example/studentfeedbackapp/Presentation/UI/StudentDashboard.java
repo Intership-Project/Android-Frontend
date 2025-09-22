@@ -14,12 +14,14 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.studentfeedbackapp.Models.ApiInterface.FeedbackModultypeApiService;
+import com.example.studentfeedbackapp.Models.ApiInterface.ScheduleFeedbackApiService;
 import com.example.studentfeedbackapp.Models.ApiInterface.StudentDashboardApiService;
 import com.example.studentfeedbackapp.Models.Request.FeedbackModuleType;
 import com.example.studentfeedbackapp.Models.Request.FeedbackType;
 import com.example.studentfeedbackapp.Models.Response.FeedbackModuleResponse;
 import com.example.studentfeedbackapp.Models.Response.FeedbackResponse;
 import com.example.studentfeedbackapp.Models.Response.ProfileResponse;
+import com.example.studentfeedbackapp.Models.Response.ScheduleFeedbackResponse;
 import com.example.studentfeedbackapp.Models.RetrofitClient.RetrofitClient;
 import com.example.studentfeedbackapp.R;
 
@@ -92,24 +94,65 @@ public class StudentDashboard extends AppCompatActivity {
         });
     }
 
+    // ✅ Updated: check active schedule before opening FeedbackForm
     private void openFeedbackFormIfSelected() {
         int feedbackPos = spinnerFeedbackType.getSelectedItemPosition();
         int modulePos = spinnerModuleType.getSelectedItemPosition();
 
-        if (feedbackPos >= 0 && modulePos >= 0 && !feedbackTypeList.isEmpty() && !moduleTypeList.isEmpty()) {
-            FeedbackType selectedFeedback = feedbackTypeList.get(feedbackPos);
-            FeedbackModuleType selectedModule = moduleTypeList.get(modulePos);
-
-            Intent intent = new Intent(StudentDashboard.this, FeedbackForm.class);
-            intent.putExtra("feedbackTypeId", selectedFeedback.getFeedbacktype_id());
-            intent.putExtra("moduleTypeId", selectedModule.getFeedbackModuleTypeId());
-            startActivity(intent);
-        } else {
+        if (feedbackPos < 0 || modulePos < 0 || feedbackTypeList.isEmpty() || moduleTypeList.isEmpty()) {
             Toast.makeText(this, "Please select both Feedback Type and Module", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        FeedbackType selectedFeedback = feedbackTypeList.get(feedbackPos);
+        FeedbackModuleType selectedModule = moduleTypeList.get(modulePos);
+
+        ScheduleFeedbackApiService scheduleApi = RetrofitClient.getClient()
+                .create(ScheduleFeedbackApiService.class);
+
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        int studentCourseId = prefs.getInt("course_id", -1);
+        int batchId = prefs.getInt("batch_id", -1);
+
+        scheduleApi.getScheduleFeedback().enqueue(new Callback<ScheduleFeedbackResponse>() {
+            @Override
+            public void onResponse(Call<ScheduleFeedbackResponse> call, Response<ScheduleFeedbackResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<ScheduleFeedbackResponse.FeedbackData> scheduleList = response.body().getData();
+                    ScheduleFeedbackResponse.FeedbackData activeSchedule = null;
+
+                    for (ScheduleFeedbackResponse.FeedbackData schedule : scheduleList) {
+                        if ("active".equalsIgnoreCase(schedule.getStatus())
+                                && schedule.getCourse_id() == studentCourseId
+                                && schedule.getFeedbacktype_id() == selectedFeedback.getFeedbacktype_id()
+                                && (schedule.getFeedbacktype_id() != 2 || schedule.getBatch_id() == batchId)) {
+                            activeSchedule = schedule;
+                            break;
+                        }
+                    }
+
+                    if (activeSchedule != null) {
+                        Intent intent = new Intent(StudentDashboard.this, FeedbackForm.class);
+                        intent.putExtra("feedbackTypeId", selectedFeedback.getFeedbacktype_id());
+                        intent.putExtra("moduleTypeId", selectedModule.getFeedbackModuleTypeId());
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(StudentDashboard.this, "No active feedback available for selected type/module", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(StudentDashboard.this, "Failed to fetch feedback schedules", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ScheduleFeedbackResponse> call, Throwable t) {
+                Toast.makeText(StudentDashboard.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Schedule API Failure", t);
+            }
+        });
     }
 
-    // Load Feddback Type
+    // Load Feedback Types
     private void loadFeedbackTypes() {
         Call<FeedbackResponse> call = studentDashboardApiService.getFeedbackTypes();
         call.enqueue(new Callback<FeedbackResponse>() {
