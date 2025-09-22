@@ -32,6 +32,8 @@
             android:inputType="textPersonName"
             android:background="@drawable/rounded_edittext"
             android:padding="12dp"
+            android:drawableStart="@drawable/person"
+            android:drawablePadding="10dp"
             android:textColor="@android:color/black"
             android:textColorHint="@android:color/black"
             android:layout_marginBottom="16dp"/>
@@ -45,6 +47,8 @@
             android:inputType="textEmailAddress"
             android:background="@drawable/rounded_edittext"
             android:padding="12dp"
+            android:drawableStart="@drawable/email"
+            android:drawablePadding="10dp"
             android:textColor="@android:color/black"
             android:textColorHint="@android:color/black"
             android:layout_marginBottom="16dp"/>
@@ -76,6 +80,8 @@
             android:inputType="textPassword"
             android:background="@drawable/rounded_edittext"
             android:padding="12dp"
+            android:drawableStart="@drawable/lock"
+            android:drawablePadding="10dp"
             android:textColor="@android:color/black"
             android:textColorHint="@android:color/black"
             android:layout_marginBottom="16dp"/>

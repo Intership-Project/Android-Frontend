@@ -13,6 +13,18 @@
         android:gravity="center_horizontal"
         android:paddingTop="100dp">
 
+
+        <!-- Login Icon -->
+        <ImageView
+            android:id="@+id/ivLoginIcon"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/login"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="Login Icon"
+            android:layout_marginBottom="24dp"/>
+
+
         <!-- Title -->
         <TextView
             android:layout_width="wrap_content"
@@ -30,6 +42,8 @@
             android:hint="Email"
             android:inputType="textEmailAddress"
             android:background="@drawable/rounded_edittext"
+            android:drawableStart="@drawable/email"
+            android:drawablePadding="10dp"
             android:padding="12dp"
             android:textColorHint="#2196F3"
             android:layout_marginBottom="16dp"/>
@@ -43,6 +57,8 @@
             android:inputType="textPassword"
             android:background="@drawable/rounded_edittext"
             android:padding="12dp"
+            android:drawableStart="@drawable/lock"
+            android:drawablePadding="10dp"
             android:textColorHint="#2196F3"
             android:layout_marginBottom="24dp"/>
 

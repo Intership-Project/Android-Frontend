@@ -104,6 +104,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=""
+                    android:drawableStart="@drawable/person"
+                    android:drawablePadding="10dp"
                     android:textColor="@android:color/black" />
 
                 <TextView
@@ -111,6 +113,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=""
+                    android:drawableStart="@drawable/email"
+                    android:drawablePadding="10dp"
                     android:textColor="@android:color/black" />
             </LinearLayout>
         </TableRow>
