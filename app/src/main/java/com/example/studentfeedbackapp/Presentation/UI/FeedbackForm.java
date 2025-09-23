@@ -214,6 +214,8 @@ public class FeedbackForm extends AppCompatActivity {
         int studentId = prefs.getInt("student_id", -1);
         int courseId = prefs.getInt("course_id", -1);
         int batchId = prefs.getInt("batch_id", -1);
+        Log.d("DEBUG_COURSE", "Student Course ID: " + courseId);
+
 
         if (studentId == -1) {
             Toast.makeText(this, "Student ID not found. Please login again.", Toast.LENGTH_SHORT).show();
@@ -252,6 +254,7 @@ public class FeedbackForm extends AppCompatActivity {
         api.submitFeedback(request).enqueue(new Callback<FilledFeedbackResponse>() {
             @Override
             public void onResponse(Call<FilledFeedbackResponse> call, Response<FilledFeedbackResponse> response) {
+                Log.d("DEBUG_COURSE", "Student Course ID: " + courseId);
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(FeedbackForm.this, "Feedback Saved", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(FeedbackForm.this, FeedbackSuccess.class));
