@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -75,16 +76,14 @@ public class StudentDashboard extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {
-            }
+            public void onNothingSelected(android.widget.AdapterView<?> parent) { }
         });
 
         btnViewFeedbackForm.setOnClickListener(v -> openFeedbackFormIfSelected());
 
         btnLogout.setOnClickListener(v -> {
             SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-            prefs.edit().clear().apply(); // Clear token + all data
-
+            prefs.edit().clear().apply();
             Toast.makeText(StudentDashboard.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
 
             Intent intent = new Intent(StudentDashboard.this, LoginActivity.class);
@@ -94,7 +93,40 @@ public class StudentDashboard extends AppCompatActivity {
         });
     }
 
-    // ✅ Updated: check active schedule before opening FeedbackForm
+    // ✅ Profile Fragment खोलने का Method
+    private void openProfileFragment(ProfileResponse.ProfileData profile) {
+
+        ProfileFragment existingFragment = (ProfileFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragmentContainerView);
+
+        if (existingFragment != null && existingFragment.isVisible()) {
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .remove(existingFragment)
+                    .commit();
+            return;
+        }
+
+
+        ProfileFragment fragment = ProfileFragment.newInstance(
+                profile.getStudentId(),
+                profile.getStudentname(),
+                profile.getEmail(),
+                profile.getCourseName(),
+                profile.getBatchName()
+        );
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainerView, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+
+
+
     private void openFeedbackFormIfSelected() {
         int feedbackPos = spinnerFeedbackType.getSelectedItemPosition();
         int modulePos = spinnerModuleType.getSelectedItemPosition();
@@ -152,7 +184,6 @@ public class StudentDashboard extends AppCompatActivity {
         });
     }
 
-    // Load Feedback Types
     private void loadFeedbackTypes() {
         Call<FeedbackResponse> call = studentDashboardApiService.getFeedbackTypes();
         call.enqueue(new Callback<FeedbackResponse>() {
@@ -233,8 +264,16 @@ public class StudentDashboard extends AppCompatActivity {
             @Override
             public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    tvName.setText("Name: " + response.body().getData().getStudentname());
-                    tvEmail.setText("Email: " + response.body().getData().getEmail());
+                    ProfileResponse.ProfileData profile = response.body().getData();
+
+                    // ✅ Dashboard पर सिर्फ़ Name + Email दिखाओ
+                    tvName.setText(profile.getStudentname());
+                    tvEmail.setText(profile.getEmail());
+
+                    // ✅ Fragment खोलने के लिए Click Listener
+                    tvName.setOnClickListener(v -> openProfileFragment(profile));
+                    tvEmail.setOnClickListener(v -> openProfileFragment(profile));
+
                 } else {
                     Toast.makeText(StudentDashboard.this, "Failed to load profile", Toast.LENGTH_SHORT).show();
                 }

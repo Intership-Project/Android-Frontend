@@ -34,6 +34,10 @@ public class QuestionResponse {
         public String getQuestionText() {
             return questionText;
         }
+
+        public int getQuestiontext() {
+            return 0;
+        }
     }
 }
 

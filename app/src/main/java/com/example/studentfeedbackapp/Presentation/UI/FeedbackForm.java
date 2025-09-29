@@ -257,7 +257,9 @@ public class FeedbackForm extends AppCompatActivity {
                 Log.d("DEBUG_COURSE", "Student Course ID: " + courseId);
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(FeedbackForm.this, "Feedback Saved", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(FeedbackForm.this, FeedbackSuccess.class));
+                    Intent intent = new Intent(FeedbackForm.this, FeedbackSuccess.class);
+                    intent.putExtra("message", "Your feedback has been submitted successfully!");
+                    startActivity(intent);
                     finish();
                 } else {
                     Toast.makeText(FeedbackForm.this, "Failed to save feedback", Toast.LENGTH_SHORT).show();
